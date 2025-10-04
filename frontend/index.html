@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobix — Порівняння цін смартфонів</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-cover bg-center"
+  style="background-image: url('public/assets/bg-phones.svg'); background-repeat: repeat; background-size: 160px 160px;">
+
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-between items-center py-4 gap-4">
+        <div class="flex items-center space-x-3">
+          <img src="public/assets/mobix-logo.png" alt="Mobix Logo" class="h-10 w-auto">
+          <h1 class="text-3xl sm:text-4xl font-bold text-blue-600">Mobix</h1>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3">
+          <input id="search" type="text" placeholder="Пошук смартфона..."
+            class="border border-gray-300 rounded-lg px-3 py-2 w-48 sm:w-60 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Реєстрація</button>
+          <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Вхід</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Сітка смартфонів -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+    <div id="catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Картки генеруються JS -->
+    </div>
+    <p id="noResults" class="hidden text-center text-gray-500 text-lg mt-10">Нічого не знайдено 😕</p>
+  </main>
+
+  <footer class="bg-gray-800 text-white text-center py-4">
+    © 2025 Mobix
+  </footer>
+
+  <script>
+    const smartphones = [
+      { name: "Samsung Galaxy S21", img: "public/assets/phones/galaxy-s21.jpg", specs: "8GB RAM, 128GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "iPhone 13", img: "public/assets/phones/iphone-13.jpg", specs: "4GB RAM, 128GB ROM", minPrice: 24999, maxPrice: 28999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Xiaomi Redmi Note 12", img: "public/assets/phones/iphone-15-pro-max.jpg", specs: "6GB RAM, 128GB ROM", minPrice: 7999, maxPrice: 9499, shop: "Foxtrot", link: "https://foxtrot.com.ua/" },
+      { name: "iPhone 15 Pro Max", img: "public/assets/phones/redmi-note-12.jpg", specs: "8GB RAM, 256GB ROM", minPrice: 45999, maxPrice: 51999, shop: "Apple", link: "https://www.apple.com/" },
+      { name: "iPhone 15", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 34999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "iPhone 14", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 28999, maxPrice: 32999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Samsung Galaxy S24 Ultra", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 49999, maxPrice: 54999, shop: "Samsung", link: "https://www.samsung.com/" },
+      { name: "Samsung Galaxy S24", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 36999, maxPrice: 40999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Samsung Galaxy Z Fold 5", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 64999, maxPrice: 69999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Samsung Galaxy Z Flip 5", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 38999, maxPrice: 42999, shop: "Epicentr", link: "https://epicentrk.ua/" },
+      { name: "Xiaomi 14 Ultra", img: "https://via.placeholder.com/300x200", specs: "16GB RAM, 512GB ROM", minPrice: 37999, maxPrice: 42999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Xiaomi 14 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 32999, maxPrice: 36999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Xiaomi 14", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 30999, maxPrice: 34999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Xiaomi 13T Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 23999, maxPrice: 27999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Xiaomi 13 Lite", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Google Pixel 8 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 34999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Google Pixel 8", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 26999, maxPrice: 30999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Google Pixel 7 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 22999, maxPrice: 26999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Google Pixel 7a", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 16999, maxPrice: 19999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "OnePlus 12", img: "https://via.placeholder.com/300x200", specs: "16GB RAM, 512GB ROM", minPrice: 32999, maxPrice: 36999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "OnePlus 11", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 25999, maxPrice: 29999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "OnePlus Nord 3", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "OnePlus Nord CE 3 Lite", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 9999, maxPrice: 12999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Samsung Galaxy A54", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Samsung Galaxy M14", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 64GB ROM", minPrice: 6999, maxPrice: 8499, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Xiaomi Poco X5", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 6999, maxPrice: 8499, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Redmi Note 11", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 4999, maxPrice: 5999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "iPhone 12", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "iPhone 11", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 14999, maxPrice: 17999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Samsung Galaxy S20", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 10999, maxPrice: 13999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Samsung Galaxy Note 20", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Xiaomi Mi 11", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Xiaomi Mi 10T", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 9999, maxPrice: 12999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Google Pixel 6", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Google Pixel 6 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 24999, maxPrice: 27999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "OnePlus 10 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 26999, maxPrice: 29999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "OnePlus 10T", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
+      { name: "Samsung Galaxy Z Fold 4", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 59999, maxPrice: 64999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
+      { name: "Samsung Galaxy Z Flip 4", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 35999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
+      { name: "Huawei P60 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 29999, maxPrice: 34999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" }
+    ];
+
+    const catalog = document.getElementById("catalog");
+    const noResults = document.getElementById("noResults");
+    const searchInput = document.getElementById("search");
+
+    function renderCards(items) {
+      catalog.innerHTML = "";
+      if (items.length === 0) {
+        noResults.classList.remove("hidden");
+        return;
+      } else {
+        noResults.classList.add("hidden");
+      }
+
+      items.forEach(phone => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full transition transform hover:scale-[1.02]";
+        card.innerHTML = `
+          <div class="flex justify-center bg-white p-2">
+            <img class="h-56 object-contain" src="${phone.img}" alt="${phone.name}">
+          </div>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <h2 class="text-lg font-semibold">${phone.name}</h2>
+              <p class="text-gray-600 text-sm">${phone.specs}</p>
+              <p class="mt-2 text-green-600 font-bold">від ${phone.minPrice} грн до ${phone.maxPrice} грн</p>
+              <p class="text-gray-500 text-sm mt-1">Найнижча ціна у: <b>${phone.shop}</b></p>
+            </div>
+            <a href="${phone.link}" target="_blank"
+               class="mt-4 text-center bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+               Перейти
+            </a>
+          </div>
+        `;
+        catalog.appendChild(card);
+      });
+    }
+
+    // Початкове відображення
+    renderCards(smartphones);
+
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = smartphones.filter(p => p.name.toLowerCase().includes(query));
+      renderCards(filtered);
+    });
+  </script>
+
+</body>
+
+</html>
