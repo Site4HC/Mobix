@@ -22,6 +22,14 @@
         <div class="flex flex-wrap justify-center gap-3">
           <input id="search" type="text" placeholder="Пошук смартфона..."
             class="border border-gray-300 rounded-lg px-3 py-2 w-48 sm:w-60 focus:outline-none focus:ring-2 focus:ring-blue-400">
+
+            <select id="sort" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="">Сортування</option>
+            <option value="name">За назвою</option>
+            <option value="cheap">Від дешевших</option>
+            <option value="expensive">Від дорожчих</option>
+          </select>
+
           <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Реєстрація</button>
           <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Вхід</button>
         </div>
@@ -34,7 +42,7 @@
     <div id="catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <!-- Картки генеруються JS -->
     </div>
-    <p id="noResults" class="hidden text-center text-gray-500 text-lg mt-10">Нічого не знайдено 😕</p>
+    <p id="noResults" class="hidden text-center text-gray-500 text-3xl mt-10">Нічого не знайдено 😕</p>
   </main>
 
   <footer class="bg-gray-800 text-white text-center py-4">
@@ -88,6 +96,7 @@
     const catalog = document.getElementById("catalog");
     const noResults = document.getElementById("noResults");
     const searchInput = document.getElementById("search");
+    const sortSelect = document.getElementById("sort");
 
     function renderCards(items) {
       catalog.innerHTML = "";
@@ -130,6 +139,23 @@
       const filtered = smartphones.filter(p => p.name.toLowerCase().includes(query));
       renderCards(filtered);
     });
+
+    sortSelect.addEventListener("change", () => {
+      let sorted = [...smartphones];
+      switch (sortSelect.value) {
+        case "name":
+          sorted.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case "cheap":
+          sorted.sort((a, b) => a.minPrice - b.minPrice);
+          break;
+        case "expensive":
+          sorted.sort((a, b) => b.minPrice - a.minPrice);
+          break;
+      }
+      renderCards(sorted);
+    });
+
   </script>
 
 </body>

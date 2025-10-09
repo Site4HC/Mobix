@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobix — Особистий кабінет</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-cover bg-center"
+  style="background-image: url('public/assets/bg-phones.svg'); background-repeat: repeat; background-size: 160px 160px;">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-between items-center py-4 gap-4">
+        <div class="flex items-center space-x-3">
+          <img src="public/assets/mobix-logo.png" alt="Mobix Logo" class="h-10 w-auto">
+          <a href="index.html" class="text-3xl sm:text-4xl font-bold text-blue-600 hover:text-blue-700 transition">
+            Mobix
+          </a>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3">
+          <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Вихід</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-10 w-full space-y-10">
+
+    <!-- Profile -->
+    <section class="bg-white rounded-2xl shadow-md p-6 flex flex-col sm:flex-row items-center gap-6">
+      <img src="https://via.placeholder.com/100" alt="Avatar" class="w-24 h-24 rounded-full border border-gray-300">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Привіт, [Ім'я користувача]!</h2>
+        <p class="text-gray-600">Ви увійшли у свій акаунт Mobix.</p>
+      </div>
+    </section>
+
+    <!-- Saved smartphones -->
+    <section class="bg-white rounded-2xl shadow-md p-6">
+      <h3 class="text-xl font-semibold mb-4">⭐ Збережені смартфони</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="bg-gray-50 rounded-xl shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition">
+          <img src="public/assets/phones/iphone-15-pro-max.jpg" alt="iPhone 15 Pro Max" class="h-40 object-contain mb-3">
+          <p class="font-medium">iPhone 15 Pro Max</p>
+          <p class="text-green-600 text-sm">від 45999 грн</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition">
+          <img src="public/assets/phones/galaxy-s21.jpg" alt="Galaxy S21" class="h-40 object-contain mb-3">
+          <p class="font-medium">Samsung Galaxy S21</p>
+          <p class="text-green-600 text-sm">від 12999 грн</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent views -->
+    <section class="bg-white rounded-2xl shadow-md p-6">
+      <h3 class="text-xl font-semibold mb-4">📱 Останні перегляди</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="bg-gray-50 rounded-xl shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition">
+          <img src="public/assets/phones/redmi-note-12.jpg" alt="Redmi Note 12" class="h-40 object-contain mb-3">
+          <p class="font-medium">Xiaomi Redmi Note 12</p>
+          <p class="text-green-600 text-sm">від 7999 грн</p>
+        </div>
+        <div class="bg-gray-50 rounded-xl shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition">
+          <img src="public/assets/phones/iphone-13.jpg" alt="iPhone 13" class="h-40 object-contain mb-3">
+          <p class="font-medium">iPhone 13</p>
+          <p class="text-green-600 text-sm">від 24999 грн</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section class="bg-white rounded-2xl shadow-md p-6">
+      <h3 class="text-xl font-semibold mb-4">⚙️ Налаштування</h3>
+      <div class="space-y-4">
+        <!-- Dark theme -->
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700">Темна тема</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" class="sr-only peer">
+            <div
+              class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-blue-600 transition-all">
+            </div>
+            <div
+              class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-5 peer-checked:bg-white">
+            </div>
+          </label>
+        </div>
+
+        <!-- Email notifications -->
+        <div class="flex items-center justify-between">
+          <span class="text-gray-700">Отримувати email-сповіщення</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" value="" class="sr-only peer">
+            <div
+              class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:bg-blue-600 transition-all">
+            </div>
+            <div
+              class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-all peer-checked:translate-x-5 peer-checked:bg-white">
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+    © 2025 Mobix
+  </footer>
+
+</body>
+
+</html>
