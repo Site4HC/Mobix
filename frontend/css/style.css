@@ -1,0 +1,68 @@
+.filter-sidebar {
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+    right: 0;
+    left: auto;
+}
+
+.filter-sidebar.open {
+    transform: translateX(0);
+}
+
+.search-with-icon {
+    background-image: url('../public/assets/icon-search.png');
+    background-repeat: no-repeat;
+    background-position: 0.75rem center;
+    background-size: 1rem;
+    padding-left: 2.25rem !important;
+}
+
+.bg-light-theme {
+    background-image: url('../public/assets/bg-phones.svg');
+    background-repeat: repeat;
+}
+
+.bg-dark-theme {
+    background-image: url('../public/assets/bg-phones-dark.svg');
+    background-repeat: repeat;
+}
+
+.select-with-icon {
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: 0.75rem center;
+    background-size: 1rem;
+    padding-left: 2.25rem !important;
+}
+
+.icon-sort {
+    background-image: url('../public/assets/icon-sort.png');
+}
+
+.icon-sort-name {
+    background-image: url('../public/assets/icon-sort-name.png');
+}
+
+.icon-sort-ascending {
+    background-image: url('../public/assets/icon-sort-ascending.png');
+}
+
+.icon-sort-descending {
+    background-image: url('../public/assets/icon-sort-descending.png');
+}
+
+.dark .icon-sort {
+    background-image: url('../public/assets/icon-sort-white.png');
+}
+
+.dark .icon-sort-name {
+    background-image: url('../public/assets/icon-sort-name-white.png');
+}
+
+.dark .icon-sort-ascending {
+    background-image: url('../public/assets/icon-sort-ascending-white.png');
+}
+
+.dark .icon-sort-descending {
+    background-image: url('../public/assets/icon-sort-descending-white.png');
+}

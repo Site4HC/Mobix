@@ -5,159 +5,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobix — Порівняння цін смартфонів</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {},
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="min-h-screen flex flex-col bg-cover bg-center"
-  style="background-image: url('public/assets/bg-phones.svg'); background-repeat: repeat; background-size: 160px 160px;">
+<body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
 
-  <header class="bg-white shadow sticky top-0 z-50">
+  <header class="bg-white shadow-md sticky top-0 z-50 dark:bg-gray-800 dark:border-b dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-wrap justify-between items-center py-4 gap-4">
-        <div class="flex items-center space-x-3">
-          <img src="public/assets/mobix-logo.png" alt="Mobix Logo" class="h-10 w-auto">
-          <h1 class="text-3xl sm:text-4xl font-bold text-blue-600">Mobix</h1>
+      <div class="flex items-center justify-between py-3 gap-2">
+        <div class="flex items-center gap-2">
+          <img src="public/assets/mobix-logo.png" alt="Mobix" class="h-8 w-auto">
+          <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">Mobix</h1>
         </div>
 
-        <div class="flex flex-wrap justify-center gap-3">
-          <input id="search" type="text" placeholder="Пошук смартфона..."
-            class="border border-gray-300 rounded-lg px-3 py-2 w-48 sm:w-60 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <div class="flex-grow max-w-xs hidden sm:flex">
+          <input id="search" type="text" placeholder="Пошук товару..."
+            class="search-with-icon border border-gray-300 rounded-full py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        </div>
 
-            <select id="sort" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <div class="flex items-center gap-2">
+          <button id="themeToggleBtn"
+            class="relative inline-flex items-center h-6 rounded-full w-11 cursor-pointer bg-gray-200 hover:bg-gray-300 transition-colors">
+            <span id="themeToggleSpan"
+              class="inline-flex items-center justify-center w-4 h-4 transform bg-white rounded-full transition-transform translate-x-1 text-xs"></span>
+          </button>
+
+          <button id="openFilterBtn"
+            class="flex items-center gap-1.5 bg-gray-100 text-sm px-3 py-2 rounded-lg hover:bg-gray-200 transition font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">
+            <img src="public/assets/icon-filter.png" alt="Фільтр" class="w-4 h-4 dark:hidden">
+            <img src="public/assets/icon-filter-white.png" alt="Фільтр" class="w-4 h-4 hidden dark:inline-block">
+            <span class="hidden sm:inline">Фільтри</span>
+          </button>
+
+          <select id="sort"
+            class="select-with-icon icon-sort hidden sm:block border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 font-medium dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <option value="">Сортування</option>
             <option value="name">За назвою</option>
             <option value="cheap">Від дешевших</option>
             <option value="expensive">Від дорожчих</option>
           </select>
 
-          <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Реєстрація</button>
-          <button class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Вхід</button>
+          <div id="authButtons" class="flex gap-2"></div>
         </div>
+      </div>
+
+      <div class="sm:hidden mb-3">
+        <input id="searchMobile" type="text" placeholder="Пошук товару..."
+          class="search-with-icon border border-gray-300 rounded-full py-2 w-full text-sm focus:ring-2 focus:ring-blue-500 transition dark:bg-gray-700 dark:border-gray-600 dark:text-white">
       </div>
     </div>
   </header>
 
-  <!-- Сітка смартфонів -->
-  <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
-    <div id="catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <!-- Картки генеруються JS -->
+  <aside id="filterSidebar"
+    class="filter-sidebar fixed top-0 right-0 w-72 max-w-full h-full bg-white shadow-2xl z-50 p-6 flex flex-col space-y-6 overflow-y-auto rounded-l-2xl dark:bg-gray-800">
+    <div class="flex justify-between items-center border-b pb-3 dark:border-gray-600">
+      <h2 class="text-xl font-semibold text-blue-600 dark:text-blue-400">Фільтри</h2>
+      <button id="closeFilterBtn"
+        class="text-gray-500 hover:text-gray-800 text-2xl dark:text-gray-400 dark:hover:text-white">&times;</button>
     </div>
-    <p id="noResults" class="hidden text-center text-gray-500 text-3xl mt-10">Нічого не знайдено 😕</p>
+
+    <div class="space-y-3 sm:hidden border-b pb-3 dark:border-gray-600">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Сортування</label>
+      <select id="sortMobile"
+        class="select-with-icon icon-sort border border-gray-300 rounded-lg px-3 py-2 w-full text-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <option value="">Сортування</option>
+        <option value="name">За назвою</option>
+        <option value="cheap">Від дешевших</option>
+        <option value="expensive">Від дорожчих</option>
+      </select>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">Виробник</h3>
+      <div id="manufacturerCheckboxes" class="space-y-1 dark:text-gray-200">
+        <label class="flex items-center gap-2"><input type="checkbox" name="manufacturer" value="Apple"
+            class="manufacturer-checkbox"> Apple</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="manufacturer" value="Samsung"
+            class="manufacturer-checkbox"> Samsung</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="manufacturer" value="Xiaomi"
+            class="manufacturer-checkbox"> Xiaomi</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="manufacturer" value="Google"
+            class="manufacturer-checkbox"> Google</label>
+        <label class="flex items-center gap-2"><input type="checkbox" name="manufacturer" value="OnePlus"
+            class="manufacturer-checkbox"> OnePlus</label>
+      </div>
+    </div>
+
+    <div class="border-t pt-4 space-y-3 dark:border-gray-600">
+      <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300">Ціновий діапазон</h3>
+      <div class="flex gap-2">
+        <input id="minPriceFilter" type="number" placeholder="Від"
+          class="border border-gray-300 rounded-full px-3 py-1 w-1/2 text-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <input id="maxPriceFilter" type="number" placeholder="До"
+          class="border border-gray-300 rounded-full px-3 py-1 w-1/2 text-sm focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+      </div>
+      <button id="applyFilterBtn"
+        class="w-full bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 transition">Застосувати</button>
+      <button id="resetFilterBtn"
+        class="w-full bg-gray-300 text-gray-800 py-2 rounded-full hover:bg-gray-400 transition dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500">Скинути</button>
+    </div>
+  </aside>
+
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-6">
+    <div id="catalog" class="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+    </div>
+    <p id="noResults" class="hidden text-center text-gray-700 text-3xl font-semibold mt-10 dark:text-gray-300">Нічого не
+      знайдено</p>
   </main>
 
-  <footer class="bg-gray-800 text-white text-center py-4">
-    © 2025 Mobix
+  <footer class="bg-gray-900 text-white text-center py-4 mt-auto dark:bg-gray-950">
+    <p class="text-sm">© 2025 Mobix — Порівняй і обери найкраще 📱</p>
   </footer>
 
-  <script>
-    const smartphones = [
-      { name: "Samsung Galaxy S21", img: "public/assets/phones/galaxy-s21.jpg", specs: "8GB RAM, 128GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "iPhone 13", img: "public/assets/phones/iphone-13.jpg", specs: "4GB RAM, 128GB ROM", minPrice: 24999, maxPrice: 28999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Xiaomi Redmi Note 12", img: "public/assets/phones/iphone-15-pro-max.jpg", specs: "6GB RAM, 128GB ROM", minPrice: 7999, maxPrice: 9499, shop: "Foxtrot", link: "https://foxtrot.com.ua/" },
-      { name: "iPhone 15 Pro Max", img: "public/assets/phones/redmi-note-12.jpg", specs: "8GB RAM, 256GB ROM", minPrice: 45999, maxPrice: 51999, shop: "Apple", link: "https://www.apple.com/" },
-      { name: "iPhone 15", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 34999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "iPhone 14", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 28999, maxPrice: 32999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Samsung Galaxy S24 Ultra", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 49999, maxPrice: 54999, shop: "Samsung", link: "https://www.samsung.com/" },
-      { name: "Samsung Galaxy S24", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 36999, maxPrice: 40999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Samsung Galaxy Z Fold 5", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 64999, maxPrice: 69999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Samsung Galaxy Z Flip 5", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 38999, maxPrice: 42999, shop: "Epicentr", link: "https://epicentrk.ua/" },
-      { name: "Xiaomi 14 Ultra", img: "https://via.placeholder.com/300x200", specs: "16GB RAM, 512GB ROM", minPrice: 37999, maxPrice: 42999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Xiaomi 14 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 32999, maxPrice: 36999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Xiaomi 14", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 30999, maxPrice: 34999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Xiaomi 13T Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 23999, maxPrice: 27999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Xiaomi 13 Lite", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Google Pixel 8 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 34999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Google Pixel 8", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 26999, maxPrice: 30999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Google Pixel 7 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 22999, maxPrice: 26999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Google Pixel 7a", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 16999, maxPrice: 19999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "OnePlus 12", img: "https://via.placeholder.com/300x200", specs: "16GB RAM, 512GB ROM", minPrice: 32999, maxPrice: 36999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "OnePlus 11", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 25999, maxPrice: 29999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "OnePlus Nord 3", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "OnePlus Nord CE 3 Lite", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 9999, maxPrice: 12999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Samsung Galaxy A54", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Samsung Galaxy M14", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 64GB ROM", minPrice: 6999, maxPrice: 8499, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Xiaomi Poco X5", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 6999, maxPrice: 8499, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Redmi Note 11", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 4999, maxPrice: 5999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "iPhone 12", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "iPhone 11", img: "https://via.placeholder.com/300x200", specs: "4GB RAM, 64GB ROM", minPrice: 14999, maxPrice: 17999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Samsung Galaxy S20", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 10999, maxPrice: 13999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Samsung Galaxy Note 20", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 15999, maxPrice: 18999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Xiaomi Mi 11", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 12999, maxPrice: 15999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Xiaomi Mi 10T", img: "https://via.placeholder.com/300x200", specs: "6GB RAM, 128GB ROM", minPrice: 9999, maxPrice: 12999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Google Pixel 6", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Google Pixel 6 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 24999, maxPrice: 27999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "OnePlus 10 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 256GB ROM", minPrice: 26999, maxPrice: 29999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "OnePlus 10T", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 128GB ROM", minPrice: 19999, maxPrice: 22999, shop: "Comfy", link: "https://comfy.ua/" },
-      { name: "Samsung Galaxy Z Fold 4", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 59999, maxPrice: 64999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" },
-      { name: "Samsung Galaxy Z Flip 4", img: "https://via.placeholder.com/300x200", specs: "8GB RAM, 256GB ROM", minPrice: 35999, maxPrice: 38999, shop: "Rozetka", link: "https://rozetka.com.ua/" },
-      { name: "Huawei P60 Pro", img: "https://via.placeholder.com/300x200", specs: "12GB RAM, 512GB ROM", minPrice: 29999, maxPrice: 34999, shop: "Foxtrot", link: "https://www.foxtrot.com.ua/" }
-    ];
-
-    const catalog = document.getElementById("catalog");
-    const noResults = document.getElementById("noResults");
-    const searchInput = document.getElementById("search");
-    const sortSelect = document.getElementById("sort");
-
-    function renderCards(items) {
-      catalog.innerHTML = "";
-      if (items.length === 0) {
-        noResults.classList.remove("hidden");
-        return;
-      } else {
-        noResults.classList.add("hidden");
-      }
-
-      items.forEach(phone => {
-        const card = document.createElement("div");
-        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col h-full transition transform hover:scale-[1.02]";
-        card.innerHTML = `
-          <div class="flex justify-center bg-white p-2">
-            <img class="h-56 object-contain" src="${phone.img}" alt="${phone.name}">
-          </div>
-          <div class="p-4 flex-1 flex flex-col justify-between">
-            <div>
-              <h2 class="text-lg font-semibold">${phone.name}</h2>
-              <p class="text-gray-600 text-sm">${phone.specs}</p>
-              <p class="mt-2 text-green-600 font-bold">від ${phone.minPrice} грн до ${phone.maxPrice} грн</p>
-              <p class="text-gray-500 text-sm mt-1">Найнижча ціна у: <b>${phone.shop}</b></p>
-            </div>
-            <a href="${phone.link}" target="_blank"
-               class="mt-4 text-center bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-               Перейти
-            </a>
-          </div>
-        `;
-        catalog.appendChild(card);
-      });
-    }
-
-    // Початкове відображення
-    renderCards(smartphones);
-
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.trim().toLowerCase();
-      const filtered = smartphones.filter(p => p.name.toLowerCase().includes(query));
-      renderCards(filtered);
-    });
-
-    sortSelect.addEventListener("change", () => {
-      let sorted = [...smartphones];
-      switch (sortSelect.value) {
-        case "name":
-          sorted.sort((a, b) => a.name.localeCompare(b.name));
-          break;
-        case "cheap":
-          sorted.sort((a, b) => a.minPrice - b.minPrice);
-          break;
-        case "expensive":
-          sorted.sort((a, b) => b.minPrice - a.minPrice);
-          break;
-      }
-      renderCards(sorted);
-    });
-
-  </script>
-
+  <script src="js/index.js" defer></script>
 </body>
 
 </html>

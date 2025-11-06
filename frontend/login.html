@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobix — Вхід</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex items-center justify-center bg-gray-900">
+
+    <div class="w-full max-w-md">
+        <a href="index.html" class="flex justify-center mb-6 text-white hover:text-blue-400 transition">
+            <h1 class="text-3xl font-bold">← Повернутися на головну</h1>
+        </a>
+
+        <div class="bg-white shadow-2xl rounded-xl p-10 space-y-4 transform transition duration-500 hover:shadow-3xl">
+            <h2 class="text-3xl font-extrabold text-center text-blue-600">Вітаємо у Mobix!</h2>
+            <p class="text-center text-gray-500 text-sm">Увійдіть, щоб керувати вибраним.</p>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-base font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" required
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 transition duration-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-400">
+                </div>
+                <div>
+                    <label for="password" class="block text-base font-medium text-gray-700">Пароль</label>
+                    <input type="password" id="password" name="password" required
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 transition duration-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-400">
+                </div>
+
+                <div id="errorMsg" class="text-sm p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg hidden transition duration-300 ease-in-out transform scale-y-0 origin-top"></div>
+
+                <button type="submit"
+                    class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold text-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+                    Увійти
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-gray-600">
+                Не маєте акаунту? 
+                <a href="register.html" class="text-blue-600 hover:text-blue-800 font-medium hover:underline">Зареєструватися</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('errorMsg');
+        const token = localStorage.getItem('mobix_jwt_token');
+
+        if (token) {
+            window.location.href = 'index.html'; 
+        }
+
+        function displayError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.remove('hidden', 'scale-y-0');
+            errorMsg.classList.add('scale-y-100');
+        }
+        function hideError() {
+            errorMsg.classList.remove('scale-y-100');
+            errorMsg.classList.add('scale-y-0');
+            setTimeout(() => { errorMsg.classList.add('hidden'); }, 300);
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError(); 
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            try {
+                const response = await fetch("http://localhost:5152/api/auth/login", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    localStorage.setItem('mobix_jwt_token', data.token);
+                    window.location.href = 'index.html'; 
+                } else {
+                    displayError(data.message || 'Невідома помилка входу. Спробуйте ще раз.');
+                }
+            } catch (error) {
+                displayError('Помилка підключення до сервера. Перевірте, чи запущений бекенд.');
+            }
+        });
+    </script>
+
+</body>
+</html>
