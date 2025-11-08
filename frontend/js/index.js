@@ -109,7 +109,7 @@ function renderAuthButtons(isLoggedIn) {
     } else {
         authButtons.innerHTML = `
                 <a href="register.html" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium">Реєстрація</a>
-                <a href="login.html" class="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm font-medium dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600">Вхід</a>
+                <a href="login.html" class="px-3 py-2 bg-green-200 rounded-lg hover:bg-green-300 text-sm font-medium dark:bg-green-900 dark:text-gray-200 dark:hover:bg-green-800">Вхід</a>
             `;
     }
 }
