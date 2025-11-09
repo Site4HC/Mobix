@@ -1,34 +1,23 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15-alpine
-    container_name: mobix_db
-    restart: always
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_DB: mobix_db
-      POSTGRES_USER: mobix_user
-      POSTGRES_PASSWORD: mobix_password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-  
   mobix-api:
     build:
-      context: ./backend/Mobix.Api 
+      context: ./backend/Mobix.Api
       dockerfile: Dockerfile
     container_name: mobix_api
     restart: always
     ports:
       - "5152:8080"
-    depends_on:
-      - db
     environment:
-      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=mobix_db;Username=mobix_user;Password=mobix_password
+      ConnectionStrings__DefaultConnection: Host=dpg-d48a4d3ipnbc73dc9ea0-a.frankfurt-postgres.render.com;Port=5432;Database=mobix_db;Username=mobix_db_user;Password=wKZ3PUeuUAiZuTbhoPQwHW9tSxlbbRTx
+
       Jwt__Key: M0bixIsSuperS3cretKey!77@wE$qK&zP*tY#v9
       Jwt__Issuer: MobixApi
       Jwt__Audience: MobixApiClient
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - ./backend/Mobix.Api/publish:/app:ro
   
   mobix-frontend:
     image: nginx:alpine
@@ -39,7 +28,4 @@ services:
     volumes:
       - ./frontend:/usr/share/nginx/html
     depends_on:
-      - mobix-api 
-
-volumes:
-  postgres_data:
+      - mobix-api
