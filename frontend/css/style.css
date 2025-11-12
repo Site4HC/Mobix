@@ -66,3 +66,32 @@
 .dark .icon-sort-descending {
     background-image: url('../public/assets/icon-sort-descending-white.png');
 }
+
+
+#imageModalOverlay {
+    @media (max-width: 639px) {
+        align-items: stretch;
+        justify-content: stretch;
+    }
+}
+
+#imageModal {
+    @media (max-width: 639px) {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+#modalImage {
+    @media (max-width: 639px) {
+        max-width: 100vw;
+        max-height: 100vh;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 0;
+    }
+}

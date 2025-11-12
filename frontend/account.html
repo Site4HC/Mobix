@@ -16,6 +16,7 @@
     }
   </script>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="public/assets/mobix-logo.png">
 </head>
 
 <body class="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -26,7 +27,7 @@
         <div class="flex items-center gap-2">
           <img src="public/assets/mobix-logo.png" alt="Mobix" class="h-8 w-auto">
           <a href="index.html"
-            class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition dark:text-blue-400">Mobix</a>
+            class="text-3xl font-bold text-blue-600 hover:text-blue-700 transition dark:text-blue-400">Mobix</a>
         </div>
         <div class="flex items-center gap-2">
           <button id="themeToggleBtn"
@@ -49,31 +50,38 @@
     <div id="content" class="hidden space-y-10">
 
       <section
-        class="bg-white rounded-xl shadow-md p-6 flex flex-col sm:flex-row items-center gap-6 border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-        <div class="flex-shrink-0">
-          <img src="https://placehold.co/100x100?text=👤" alt="Avatar"
-            class="w-24 h-24 rounded-full border border-gray-200 object-cover" />
-        </div>
-        <div class="flex-1 text-center sm:text-left">
-          <h2 id="userEmail" class="text-2xl font-bold text-gray-800 dark:text-gray-100">Привіт!</h2>
-          <p class="text-gray-600 dark:text-gray-300">
-            Ви увійшли як: <b id="userRole" class="text-blue-600 dark:text-blue-400"></b>
-          </p>
-          <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">
-            ID користувача: <span id="userId"></span>
-          </p>
-        </div>
-      </section>
+        class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
 
-      <section class="bg-white rounded-xl shadow-md p-6 border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-        <h3 class="text-xl font-semibold text-blue-600 mb-4 flex items-center gap-2 dark:text-blue-400">
-          ⭐ Мої збережені смартфони
-        </h3>
-        <div id="favoritesList" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          <p id="noFavorites" class="text-gray-500 col-span-full text-center dark:text-gray-400">
-            Завантаження...
-          </p>
+        <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
+          <div class="flex-shrink-0">
+            <img src="https://placehold.co/100x100?text=👤" alt="Avatar"
+              class="w-24 h-24 rounded-full border border-gray-200 object-cover" />
+          </div>
+          <div class="flex-1 text-center sm:text-left">
+            <h2 id="userEmail" class="text-2xl font-bold text-gray-800 dark:text-gray-100">Привіт!</h2>
+            <p class="text-gray-600 dark:text-gray-300">
+              Ви увійшли як: <b id="userRole" class="text-blue-600 dark:text-blue-400"></b>
+            </p>
+            <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">
+              ID користувача: <span id="userId"></span>
+            </p>
+          </div>
         </div>
+
+        <hr class="border-gray-200 dark:border-gray-700">
+
+        <div class="p-6">
+          <h3 class="text-xl font-semibold text-blue-600 mb-4 flex items-center gap-2 dark:text-blue-400">
+            <img src="public/assets/icon-star-selected.png" alt="Star" class="w-5 h-5">
+            <span>Мої збережені смартфони</span>
+          </h3>
+          <div id="favoritesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <p id="noFavorites" class="text-gray-500 col-span-full text-center dark:text-gray-400">
+              Завантаження...
+            </p>
+          </div>
+        </div>
+
       </section>
     </div>
   </main>

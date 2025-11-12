@@ -19,7 +19,14 @@ const resetFilterBtn = document.getElementById("resetFilterBtn");
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeToggleSpan = document.getElementById('themeToggleSpan');
 const htmlElement = document.documentElement;
-const bodyElement = document.body; // Додано
+const bodyElement = document.body;
+
+const imageModalOverlay = document.getElementById('imageModalOverlay');
+const modalImage = document.getElementById('modalImage');
+const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+const scrollBtn = document.getElementById('scrollBtn');
+const scrollBtnIcon = document.getElementById('scrollBtnIcon');
 
 let allSmartphones = [];
 let userFavorites = new Set();
@@ -72,16 +79,17 @@ function renderAuthButtons(isLoggedIn) {
     authButtons.innerHTML = '';
     if (isLoggedIn) {
         authButtons.innerHTML = `
-                <div class="relative">
-                    <button id="profileDropdownBtn" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-1 text-sm dark:bg-blue-600 dark:hover:bg-blue-700">
-                        Мій профіль <span id="dropdownArrow">▼</span>
-                    </button>
-                    <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20 border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
-                        <a href="account.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Профіль</a>
-                        <button id="logoutDropdownBtn" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Вихід</button>
-                    </div>
+            <div class="relative">
+                <button id="profileDropdownBtn" class="px-2 sm:px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-1 text-sm dark:bg-blue-600 dark:hover:bg-blue-700 font-medium">
+                    <img src="public/assets/icon-user.png" alt="Profile" class="h-4 w-4">
+                    <span class="hidden sm:inline ml-1">Мій профіль</span>
+                </button>
+                <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-20 border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+                    <a href="account.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Профіль</a>
+                    <button id="logoutDropdownBtn" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">Вихід</button>
                 </div>
-            `;
+            </div>
+        `;
 
         const profileDropdownBtn = document.getElementById('profileDropdownBtn');
         const dropdownMenu = document.getElementById('dropdownMenu');
@@ -108,9 +116,15 @@ function renderAuthButtons(isLoggedIn) {
 
     } else {
         authButtons.innerHTML = `
-                <a href="register.html" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium">Реєстрація</a>
-                <a href="login.html" class="px-3 py-2 bg-green-200 rounded-lg hover:bg-green-300 text-sm font-medium dark:bg-green-900 dark:text-gray-200 dark:hover:bg-green-800">Вхід</a>
-            `;
+        <a href="register.html" class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm font-medium">
+            <span class="hidden sm:inline">Реєстрація</span>
+            <span class="sm:hidden">Рег.</span>
+        </a>
+        <a href="login.html" class="px-3 py-2 bg-green-200 rounded-lg hover:bg-green-300 text-sm font-medium dark:bg-green-900 dark:text-gray-200 dark:hover:bg-green-800">
+            <span class="hidden sm:inline">Вхід</span>
+            <span class="sm:hidden">Вхід</span>
+        </a>
+      `;
     }
 }
 
@@ -208,18 +222,18 @@ function renderCards(items) {
         const isFavorite = userFavorites.has(phone.id);
 
         const card = document.createElement("div");
-        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-xl hover:-translate-y-1 duration-300 dark:bg-gray-800";
+        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-xl duration-300 dark:bg-gray-800";
 
         card.innerHTML = `
                 <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700">
-                    <img class="h-44 object-contain" src="${phone.imageUrl || 'https://placehold.co/300x200'}" alt="${phone.name}">
+                    <img class="h-44 object-contain cursor-pointer card-image-trigger" src="${phone.imageUrl || 'https://placehold.co/300x200'}" alt="${phone.name}">
                 </div>
                 <div class="p-4 flex flex-col justify-between flex-1">
                     <div>
                         <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${phone.name}</h2>
                         <p class="text-gray-500 text-sm dark:text-gray-400">${phone.manufacturer || ''}</p>
                         
-                        <p class="mt-2 text-green-600 font-bold">${phone.minPrice > 0 ? `від ${phone.minPrice.toFixed(0)} грн` : 'Ціна не знайдена'}</p>
+                        <p class="mt-2 text-green-600 text-lg font-bold">${phone.minPrice > 0 ? `від <span class="underline">${phone.minPrice.toFixed(0)}</span> грн` : 'Ціна не знайдена'}</p>
                         
                         <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">
                             ${phone.storeName ? `Найнижча ціна у: <b>${phone.storeName}</b>` : ''}
@@ -230,13 +244,14 @@ function renderCards(items) {
                         <button 
                             data-id="${phone.id}" 
                             data-isfavorite="${isFavorite}"
-                            class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition 
-                            ${isFavorite ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
-                            ⭐ ${isFavorite ? 'У вибраному' : 'Додати'}
+                            class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium
+                            ${isFavorite ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
+                            <img src="${isFavorite ? 'public/assets/icon-star-selected.png' : 'public/assets/icon-star.png'}" alt="Star" class="w-4 h-4">
+                            <span>${isFavorite ? 'У вибраному' : 'Додати'}</span>
                         </button>
                         
                         <a href="${storeUrl}" target="_blank"
-                            class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm 
+                            class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm font-medium
                             ${phone.minPrice === 0 ? 'opacity-50 pointer-events-none' : ''}">
                             ${phone.minPrice > 0 ? 'Купити' : 'Н/Д'}
                         </a>
@@ -251,6 +266,12 @@ function renderCards(items) {
             const id = parseInt(e.currentTarget.dataset.id);
             const isFav = e.currentTarget.dataset.isfavorite === 'true';
             toggleFavorite(id, isFav);
+        });
+    });
+
+    document.querySelectorAll('.card-image-trigger').forEach(img => {
+        img.addEventListener('click', (e) => {
+            openImageModal(e.currentTarget.src);
         });
     });
 }
@@ -368,3 +389,73 @@ searchInputMobile.addEventListener("input", filterAndRender);
 
 renderAuthButtons(!!token);
 fetchSmartphones();
+
+function openImageModal(src) {
+    modalImage.src = src;
+    imageModalOverlay.classList.remove('hidden');
+    imageModalOverlay.classList.add('flex');
+}
+
+function closeImageModal() {
+    imageModalOverlay.classList.add('hidden');
+    imageModalOverlay.classList.remove('flex');
+    modalImage.src = "";
+}
+
+modalCloseBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeImageModal();
+});
+
+modalImage.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeImageModal();
+});
+
+imageModalOverlay.addEventListener('click', (e) => {
+    if (e.target === imageModalOverlay) {
+        closeImageModal();
+    }
+});
+
+if (scrollBtn && scrollBtnIcon) {
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight;
+        const winHeight = window.innerHeight;
+
+        const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
+
+        if (scrollTop > 200) {
+            scrollBtn.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            scrollBtn.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        if (scrollPercent >= 65) {
+            scrollBtnIcon.src = 'public/assets/icon-scroll-up.png';
+            scrollBtn.dataset.action = 'up';
+        } else {
+            scrollBtnIcon.src = 'public/assets/icon-scroll-down.png';
+            scrollBtn.dataset.action = 'down';
+        }
+    });
+
+    scrollBtn.addEventListener('click', () => {
+        if (scrollBtn.dataset.action === 'up') {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        } else {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    });
+
+} else {
+    console.error("Елементи кнопки скроллу не знайдено.");
+}

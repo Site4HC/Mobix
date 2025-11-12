@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mobix — Вхід</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="public/assets/mobix-logo.png">
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-gray-900">
 
     <div class="w-full max-w-md">
         <a href="index.html" class="flex justify-center mb-6 text-white hover:text-blue-400 transition">
-            <h1 class="text-3xl font-bold">← Повернутися на головну</h1>
+            <h1 class="text-xl sm:text-3xl font-bold">← Повернутися на головну</h1>
         </a>
 
         <div class="bg-white shadow-2xl rounded-xl p-10 space-y-4 transform transition duration-500 hover:shadow-3xl">
@@ -31,7 +32,9 @@
                         class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 transition duration-300 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 hover:border-gray-400">
                 </div>
 
-                <div id="errorMsg" class="text-sm p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg hidden transition duration-300 ease-in-out transform scale-y-0 origin-top"></div>
+                <div id="errorMsg"
+                    class="text-sm p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg hidden transition duration-300 ease-in-out transform scale-y-0 origin-top">
+                </div>
 
                 <button type="submit"
                     class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold text-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
@@ -40,8 +43,9 @@
             </form>
 
             <p class="text-center text-sm text-gray-600">
-                Не маєте акаунту? 
-                <a href="register.html" class="text-blue-600 hover:text-blue-800 font-medium hover:underline">Зареєструватися</a>
+                Не маєте акаунту?
+                <a href="register.html"
+                    class="text-blue-600 hover:text-blue-800 font-medium hover:underline">Зареєструватися</a>
             </p>
         </div>
     </div>
@@ -54,7 +58,7 @@
         const token = localStorage.getItem('mobix_jwt_token');
 
         if (token) {
-            window.location.href = 'index.html'; 
+            window.location.href = 'index.html';
         }
 
         function displayError(message) {
@@ -70,7 +74,7 @@
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            hideError(); 
+            hideError();
 
             const email = emailInput.value.trim();
             const password = passwordInput.value;
@@ -86,7 +90,7 @@
 
                 if (response.ok && data.token) {
                     localStorage.setItem('mobix_jwt_token', data.token);
-                    window.location.href = 'index.html'; 
+                    window.location.href = 'index.html';
                 } else {
                     displayError(data.message || 'Невідома помилка входу. Спробуйте ще раз.');
                 }
@@ -97,4 +101,5 @@
     </script>
 
 </body>
+
 </html>

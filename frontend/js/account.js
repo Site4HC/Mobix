@@ -19,10 +19,10 @@ if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
             themeToggleSpan.classList.remove('translate-x-1', 'bg-white');
             themeToggleSpan.classList.add('translate-x-6', 'bg-gray-600');
             themeToggleSpan.innerHTML = '🌙';
-            
+
             bodyElement.classList.add('bg-dark-theme');
             bodyElement.classList.remove('bg-light-theme');
-            
+
             localStorage.setItem('mobix_theme', 'dark');
         } else {
             htmlElement.classList.remove('dark');
@@ -31,10 +31,10 @@ if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
             themeToggleSpan.classList.remove('translate-x-6', 'bg-gray-600');
             themeToggleSpan.classList.add('translate-x-1', 'bg-white');
             themeToggleSpan.innerHTML = '☀️';
-            
+
             bodyElement.classList.add('bg-light-theme');
             bodyElement.classList.remove('bg-dark-theme');
-            
+
             localStorage.setItem('mobix_theme', 'light');
         }
     }
@@ -53,26 +53,26 @@ if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
 
 
 logoutBtn.addEventListener('click', () => {
- localStorage.removeItem('mobix_jwt_token');
- window.location.href = 'index.html';
+    localStorage.removeItem('mobix_jwt_token');
+    window.location.href = 'index.html';
 });
 
 function renderFavorites(favorites) {
- favoritesList.innerHTML = '';
+    favoritesList.innerHTML = '';
 
- if (!favorites || favorites.length === 0) {
-  favoritesList.innerHTML = `
+    if (!favorites || favorites.length === 0) {
+        favoritesList.innerHTML = `
    <p class="text-gray-500 col-span-full text-center dark:text-gray-400">
     У вас немає збережених товарів 😕
    </p>`;
-  return;
- }
+        return;
+    }
 
- favorites.forEach(phone => {
-  const card = document.createElement('div');
-  card.className =
-   "bg-gray-50 rounded-xl shadow-sm hover:shadow-lg transition p-4 flex flex-col items-center text-center border border-gray-100 dark:bg-gray-700 dark:border-gray-600";
-  card.innerHTML = `
+    favorites.forEach(phone => {
+        const card = document.createElement('div');
+        card.className =
+            "bg-gray-50 rounded-xl shadow-sm hover:shadow-lg transition p-4 flex flex-col items-center text-center border border-gray-100 dark:bg-gray-700 dark:border-gray-600";
+        card.innerHTML = `
    <div class="flex justify-center bg-white rounded-xl p-3 w-full dark:bg-gray-800">
     <img src="${phone.imageUrl || 'https://placehold.co/150x150'}"
       alt="${phone.name}" class="h-36 object-contain">
@@ -84,65 +84,61 @@ function renderFavorites(favorites) {
     Видалити з вибраного
    </button>
   `;
-  favoritesList.appendChild(card);
- });
+        favoritesList.appendChild(card);
+    });
 
- document.querySelectorAll('.remove-favorite').forEach(btn => {
-  btn.addEventListener('click', async e => {
-   const id = parseInt(e.currentTarget.dataset.id);
-   const res = await fetch(`http://localhost:5152/api/users/favorites/${id}`, {
-    method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${token}` }
-   });
-   if (res.ok) {
-    fetchProfile();
-   } else {
-    alert('Не вдалося видалити товар.');
-   }
-  });
- });
+    document.querySelectorAll('.remove-favorite').forEach(btn => {
+        btn.addEventListener('click', async e => {
+            const id = parseInt(e.currentTarget.dataset.id);
+            const res = await fetch(`http://localhost:5152/api/users/favorites/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchProfile();
+            } else {
+                alert('Не вдалося видалити товар.');
+            }
+        });
+    });
 }
 
 async function fetchProfile() {
- if (!token) {
-  alert('Ви не авторизовані. Повернення на головну сторінку.');
-  window.location.href = 'index.html';
-  return;
- }
+    if (!token) {
+        alert('Ви не авторизовані. Повернення на головну сторінку.');
+        window.location.href = 'index.html';
+        return;
+    }
 
- try {
-  const response = await fetch('http://localhost:5152/api/users/profile', {
-   headers: { 'Authorization': `Bearer ${token}` }
-  });
+    try {
+        const response = await fetch('http://localhost:5152/api/users/profile', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
 
-  if (response.status === 401) {
-   alert('Сесія закінчилась. Увійдіть знову.');
-   localStorage.removeItem('mobix_jwt_token');
-   window.location.href = 'index.html';
-   return;
-  }
+        if (response.status === 401) {
+            alert('Сесія закінчилась. Увійдіть знову.');
+            localStorage.removeItem('mobix_jwt_token');
+            window.location.href = 'index.html';
+            return;
+        }
 
-  if (!response.ok) throw new Error('Не вдалося отримати дані.');
+        if (!response.ok) throw new Error('Не вдалося отримати дані.');
 
-  const profile = await response.json();
+        const profile = await response.json();
 
-  document.getElementById('userEmail').textContent = `Привіт, ${profile.email}!`;
-  document.getElementById('userRole').textContent = profile.role;
-  document.getElementById('userId').textContent = profile.id;
+        document.getElementById('userEmail').textContent = `Привіт, ${profile.email}!`;
+        document.getElementById('userRole').textContent = profile.role;
+        document.getElementById('userId').textContent = profile.id;
 
-  renderFavorites(profile.favorites);
+        renderFavorites(profile.favorites);
 
-  loadingDiv.classList.add('hidden');
-  contentDiv.classList.remove('hidden');
+        loadingDiv.classList.add('hidden');
+        contentDiv.classList.remove('hidden');
 
- } catch (err) {
-  console.error(err);
-  loadingDiv.textContent = 'Помилка: не вдалося з’єднатися з сервером.';
- }
+    } catch (err) {
+        console.error(err);
+        loadingDiv.textContent = 'Помилка: не вдалося з’єднатися з сервером.';
+    }
 }
 
 fetchProfile();
-
-// loadingDiv.classList.add('hidden');
-// contentDiv.classList.remove('hidden');
-// renderFavorites([]);
