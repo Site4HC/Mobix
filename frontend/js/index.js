@@ -161,7 +161,7 @@ async function fetchFavoritesList() {
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:5152/api/users/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -185,7 +185,7 @@ async function toggleFavorite(smartphoneId, isCurrentlyFavorite) {
     }
 
     const method = isCurrentlyFavorite ? 'DELETE' : 'POST';
-    const url = `http://localhost:5152/api/users/favorites/${smartphoneId}`;
+    const url = `${API_BASE_URL}/api/users/favorites/${smartphoneId}`;
 
     try {
         const response = await fetch(url, {
