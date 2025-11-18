@@ -28,6 +28,8 @@ const modalCloseBtn = document.getElementById('modalCloseBtn');
 const scrollBtn = document.getElementById('scrollBtn');
 const scrollBtnIcon = document.getElementById('scrollBtnIcon');
 
+const API_BASE_URL = 'https://mobix.onrender.com';
+
 let allSmartphones = [];
 let userFavorites = new Set();
 let token = localStorage.getItem('mobix_jwt_token');
