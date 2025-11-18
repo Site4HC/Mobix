@@ -4,6 +4,8 @@ const contentDiv = document.getElementById('content');
 const favoritesList = document.getElementById('favoritesList');
 const logoutBtn = document.getElementById('logoutBtn');
 
+const API_BASE_URL = 'https://mobix.onrender.com';
+
 const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeToggleSpan = document.getElementById('themeToggleSpan');
 const htmlElement = document.documentElement;
@@ -90,7 +92,7 @@ function renderFavorites(favorites) {
     document.querySelectorAll('.remove-favorite').forEach(btn => {
         btn.addEventListener('click', async e => {
             const id = parseInt(e.currentTarget.dataset.id);
-            const res = await fetch(`http://localhost:5152/api/users/favorites/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/users/favorites/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -111,7 +113,7 @@ async function fetchProfile() {
     }
 
     try {
-        const response = await fetch('http://localhost:5152/api/users/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 

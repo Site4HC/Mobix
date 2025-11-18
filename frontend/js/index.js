@@ -132,8 +132,9 @@ async function handleLogin() {
     const storedEmail = "nemkogilevskii@gmail.com";
     const storedPassword = "Strings";
 
-    try {
-        const response = await fetch("http://localhost:5152/api/auth/login", {
+        const API_BASE_URL = 'https://mobix.onrender.com';
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: storedEmail, password: storedPassword })
