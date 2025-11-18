@@ -28,6 +28,8 @@ const modalCloseBtn = document.getElementById('modalCloseBtn');
 const scrollBtn = document.getElementById('scrollBtn');
 const scrollBtnIcon = document.getElementById('scrollBtnIcon');
 
+const API_BASE_URL = 'https://mobix.onrender.com';
+
 let allSmartphones = [];
 let userFavorites = new Set();
 let token = localStorage.getItem('mobix_jwt_token');
@@ -132,8 +134,9 @@ async function handleLogin() {
     const storedEmail = "nemkogilevskii@gmail.com";
     const storedPassword = "Strings";
 
-    try {
-        const response = await fetch("http://localhost:5152/api/auth/login", {
+        const API_BASE_URL = 'https://mobix.onrender.com';
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: storedEmail, password: storedPassword })
@@ -160,7 +163,7 @@ async function fetchFavoritesList() {
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:5152/api/users/profile', {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
@@ -184,7 +187,7 @@ async function toggleFavorite(smartphoneId, isCurrentlyFavorite) {
     }
 
     const method = isCurrentlyFavorite ? 'DELETE' : 'POST';
-    const url = `http://localhost:5152/api/users/favorites/${smartphoneId}`;
+    const url = `${API_BASE_URL}/api/users/favorites/${smartphoneId}`;
 
     try {
         const response = await fetch(url, {
@@ -285,7 +288,8 @@ function fetchSmartphones(sortBy = '') {
     const minPrice = minPriceFilter.value ? parseInt(minPriceFilter.value) : '';
     const maxPrice = maxPriceFilter.value ? parseInt(maxPriceFilter.value) : '';
 
-    const url = `http://localhost:5152/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    const API_BASE_URL = 'https://mobix.onrender.com';
+    const url = `${API_BASE_URL}/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
 
     fetchFavoritesList().then(() => {
         fetch(url).then(response => {
