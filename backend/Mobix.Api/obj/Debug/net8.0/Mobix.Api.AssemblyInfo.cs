@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Mobix.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b9afa0fd96bae30147c4719bd388b222e05719a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d90cb75cf049bae947bcbd5e34f648071cac117f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Mobix.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Mobix.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

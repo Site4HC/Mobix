@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "cBsWJnRL41Q=",
+  "dgSpecHash": "zcjCBh/S6PU=",
   "success": true,
-  "projectFilePath": "D:\\University\\Main\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
+  "projectFilePath": "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\romko\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\romko\\.nuget\\packages\\htmlagilitypack\\1.11.61\\htmlagilitypack.1.11.61.nupkg.sha512",

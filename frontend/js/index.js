@@ -285,7 +285,8 @@ function fetchSmartphones(sortBy = '') {
     const minPrice = minPriceFilter.value ? parseInt(minPriceFilter.value) : '';
     const maxPrice = maxPriceFilter.value ? parseInt(maxPriceFilter.value) : '';
 
-    const url = `http://localhost:5152/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    const API_BASE_URL = 'https://mobix.onrender.com';
+    const url = `${API_BASE_URL}/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
 
     fetchFavoritesList().then(() => {
         fetch(url).then(response => {
