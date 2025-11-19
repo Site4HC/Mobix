@@ -40,7 +40,7 @@ namespace Mobix.Api.Controllers
             }
             
             var cutoffDate = DateTime.UtcNow.AddDays(-1); 
-
+            
             var dataQuery = smartphonesQuery
                 .Select(s => new {
                     Smartphone = s,
@@ -48,18 +48,21 @@ namespace Mobix.Api.Controllers
                                         .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
                                         .OrderBy(ph => ph.Price)
                                         .Include(ph => ph.Store)
-                                        .FirstOrDefault()
+                                        .FirstOrDefault(),
+                    MaxPriceValue = _context.PriceHistories
+                                        .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
+                                        .Max(ph => (decimal?)ph.Price) 
                 })
                 .Where(data => data.BestPriceEntry != null); 
 
             if (minPrice.HasValue && minPrice.Value > 0)
             {
-                dataQuery = dataQuery.Where(data => data.BestPriceEntry.Price >= minPrice.Value);
+                dataQuery = dataQuery.Where(data => data.BestPriceEntry.Price >= minPrice.Value); 
             }
 
             if (maxPrice.HasValue && maxPrice.Value > 0)
             {
-                dataQuery = dataQuery.Where(data => data.BestPriceEntry.Price <= maxPrice.Value);
+                dataQuery = dataQuery.Where(data => data.MaxPriceValue.HasValue && data.MaxPriceValue.Value <= maxPrice.Value);
             }
 
             switch (sortBy?.ToLower())
@@ -90,7 +93,8 @@ namespace Mobix.Api.Controllers
                     ImageUrl = data.Smartphone.ImageUrl,
                     MinPrice = data.BestPriceEntry.Price,
                     StoreName = data.BestPriceEntry.Store.Name,
-                    StoreUrl = data.BestPriceEntry.ProductUrl
+                    StoreUrl = data.BestPriceEntry.ProductUrl,
+                    MaxPrice = data.MaxPriceValue ?? data.BestPriceEntry.Price 
                 })
                 .ToListAsync();
 
