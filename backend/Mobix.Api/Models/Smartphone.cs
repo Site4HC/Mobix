@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Mobix.Api.Models
 {
@@ -7,15 +8,21 @@ namespace Mobix.Api.Models
         public int Id { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string Name { get; set; } 
-
         [StringLength(100)]
-        public string Manufacturer { get; set; } 
+        public string Name { get; set; }
 
+        [StringLength(50)]
+        public string Manufacturer { get; set; }
+        
         [StringLength(500)]
         public string ImageUrl { get; set; }
 
-        public ICollection<PriceHistory> PriceHistories { get; set; } = new List<PriceHistory>();
+        [StringLength(500)]
+        public string ImageUrl2 { get; set; } 
+
+        [StringLength(500)]
+        public string ImageUrl3 { get; set; } 
+
+        public ICollection<PriceHistory> PriceHistories { get; set; }
     }
 }

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj": {}
+    "D:\\University\\MainProject\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj": {}
   },
   "projects": {
-    "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj": {
+    "D:\\University\\MainProject\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
+        "projectUniqueName": "D:\\University\\MainProject\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
         "projectName": "Mobix.Api",
-        "projectPath": "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
+        "projectPath": "D:\\University\\MainProject\\Mobix\\backend\\Mobix.Api\\Mobix.Api.csproj",
         "packagesPath": "C:\\Users\\romko\\.nuget\\packages\\",
-        "outputPath": "D:\\University\\MainProj\\Mobix\\backend\\Mobix.Api\\obj\\",
+        "outputPath": "D:\\University\\MainProject\\Mobix\\backend\\Mobix.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

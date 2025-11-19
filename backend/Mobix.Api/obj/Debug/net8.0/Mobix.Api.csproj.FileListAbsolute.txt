@@ -364,3 +364,9 @@ D:\University\MainProj\Mobix\backend\Mobix.Api\obj\Debug\net8.0\refint\Mobix.Api
 D:\University\MainProj\Mobix\backend\Mobix.Api\obj\Debug\net8.0\Mobix.Api.pdb
 D:\University\MainProj\Mobix\backend\Mobix.Api\obj\Debug\net8.0\Mobix.Api.genruntimeconfig.cache
 D:\University\MainProj\Mobix\backend\Mobix.Api\obj\Debug\net8.0\ref\Mobix.Api.dll
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\web.config
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\appsettings.Development.json
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\appsettings.json
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\Mobix.Api.deps.json
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\Mobix.Api.runtimeconfig.json
+D:\University\MainProject\Mobix\backend\Mobix.Api\bin\Debug\net8.0\publish\Mobix.Api.staticwebassets.endpoints.json

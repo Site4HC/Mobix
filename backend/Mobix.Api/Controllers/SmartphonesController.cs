@@ -38,17 +38,19 @@ namespace Mobix.Api.Controllers
                     smartphonesQuery = smartphonesQuery.Where(s => selectedManufacturers.Contains(s.Manufacturer.ToLower()));
                 }
             }
+            
+            var cutoffDate = DateTime.UtcNow.AddDays(-1); 
 
             var dataQuery = smartphonesQuery
                 .Select(s => new {
                     Smartphone = s,
                     BestPriceEntry = _context.PriceHistories
-                                        .Where(ph => ph.SmartphoneId == s.Id)
+                                        .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
                                         .OrderBy(ph => ph.Price)
                                         .Include(ph => ph.Store)
                                         .FirstOrDefault()
                 })
-                .Where(data => data.BestPriceEntry != null);
+                .Where(data => data.BestPriceEntry != null); 
 
             if (minPrice.HasValue && minPrice.Value > 0)
             {
@@ -88,7 +90,7 @@ namespace Mobix.Api.Controllers
                     ImageUrl = data.Smartphone.ImageUrl,
                     MinPrice = data.BestPriceEntry.Price,
                     StoreName = data.BestPriceEntry.Store.Name,
-                    StoreUrl = data.BestPriceEntry.ProductUrl 
+                    StoreUrl = data.BestPriceEntry.ProductUrl
                 })
                 .ToListAsync();
 

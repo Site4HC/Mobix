@@ -10,5 +10,7 @@ namespace Mobix.Api.DTOs
         public decimal MinPrice { get; set; }
         public string StoreName { get; set; } 
         public string StoreUrl { get; set; }  
+        public string ImageUrl2 { get; set; }
+        public string ImageUrl3 { get; set; }
     }
 }
