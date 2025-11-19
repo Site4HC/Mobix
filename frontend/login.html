@@ -18,7 +18,7 @@
 
         <div class="bg-white shadow-2xl rounded-xl p-10 space-y-4 transform transition duration-500 hover:shadow-3xl">
             <h2 class="text-3xl font-extrabold text-center text-blue-600">Вітаємо у Mobix!</h2>
-            <p class="text-center text-gray-500 text-sm">Увійдіть, щоб керувати вибраним.</p>
+            <p class="text-center text-gray-500 text-sm">Увійдіть, щоб керувати профілем.</p>
 
             <form id="loginForm" class="space-y-6">
                 <div>
@@ -80,8 +80,8 @@
             const password = passwordInput.value;
 
             try {
-                    const API_BASE_URL = 'https://mobix.onrender.com';
-                    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                const API_BASE_URL = 'https://mobix.onrender.com';
+                const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -91,6 +91,11 @@
 
                 if (response.ok && data.token) {
                     localStorage.setItem('mobix_jwt_token', data.token);
+
+                    if (data.User && data.User.email) {
+                        localStorage.setItem('mobix_user_email', data.User.email);
+                    }
+
                     window.location.href = 'index.html';
                 } else {
                     displayError(data.message || 'Невідома помилка входу. Спробуйте ще раз.');

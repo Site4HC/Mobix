@@ -45,13 +45,40 @@
   </header>
 
   <main class="flex-grow max-w-7xl mx-auto px-4 py-10 w-full space-y-10">
-    <div id="loading" class="text-center text-gray-500 text-xl dark:text-gray-400">Завантаження профілю...</div>
+
+    <div id="profileSkeletonWrapper" class="mt-[40px]">
+      <div id="profileSkeleton"
+        class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden animate-pulse">
+
+        <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
+          <div class="flex-shrink-0">
+            <div class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          </div>
+          <div class="flex-1 text-center sm:text-left w-full space-y-2">
+            <div class="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0"></div>
+            <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0"></div>
+            <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0 mt-1"></div>
+          </div>
+        </div>
+
+        <hr class="border-gray-200 dark:border-gray-700">
+
+        <div class="p-6">
+          <div class="h-7 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="content" class="hidden space-y-10">
-
       <section
         class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
-
         <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
           <div class="flex-shrink-0">
             <img src="https://placehold.co/100x100?text=👤" alt="Avatar"
@@ -81,10 +108,21 @@
             </p>
           </div>
         </div>
-
       </section>
     </div>
   </main>
+
+  <div id="imageModalOverlay"
+    class="fixed inset-0 bg-black bg-opacity-75 hidden z-[60] flex items-center justify-center p-4">
+    <div id="imageModal" class="relative group">
+      <img id="modalImage" src="" alt="Збільшене зображення"
+        class="max-w-4xl max-h-[90vh] object-contain rounded-lg cursor-pointer">
+      <button id="modalCloseBtn"
+        class="absolute top-2 right-2 w-10 h-10 sm:w-12 sm:h-12 bg-black bg-opacity-50 text-white text-3xl rounded-full flex items-center justify-center pb-1 leading-none opacity-100 transition-opacity hover:bg-opacity-75 lg:top-4 lg:right-4 lg:opacity-0 lg:group-hover:opacity-100 lg:transition-opacity lg:hover:bg-opacity-75">
+        &times;
+      </button>
+    </div>
+  </div>
 
   <footer class="bg-gray-900 text-white text-center py-4 mt-auto dark:bg-gray-950">
     <p class="text-sm">© 2025 Mobix — Порівняй і обери найкраще 📱</p>
