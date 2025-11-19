@@ -17,5 +17,8 @@ namespace Mobix.Api.Models
         [Required]
         [StringLength(50)]
         public string Role { get; set; } = "User"; 
+
+        [StringLength(500)]
+        public string AvatarUrl { get; set; }
     }
 }
