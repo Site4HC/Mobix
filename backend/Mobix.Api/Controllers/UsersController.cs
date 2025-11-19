@@ -7,11 +7,12 @@ using Mobix.Api.Models;
 using System.Security.Claims;
 using System;
 using System.Threading.Tasks;
+using System.Linq; 
 
 namespace Mobix.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     [Authorize] 
     public class UsersController : ControllerBase
     {
@@ -36,19 +37,13 @@ namespace Mobix.Api.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var userId = GetUserIdFromToken();
-            if (userId == Guid.Empty)
-            {
-                return Unauthorized(new { message = "Токен недійсний або відсутній ID." });
-            }
+            if (userId == Guid.Empty) return Unauthorized(new { message = "Токен недійсний або відсутній ID." });
 
             var user = await _context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
-            if (user == null)
-            {
-                return NotFound(new { message = "Профіль не знайдено." });
-            }
+            if (user == null) return NotFound(new { message = "Профіль не знайдено." });
             
             var favorites = await _context.UserFavorites
                 .Where(uf => uf.UserId == userId)
@@ -60,17 +55,34 @@ namespace Mobix.Api.Controllers
                 })
                 .ToListAsync();
 
-
             var userProfile = new UserProfileDto
             {
                 Id = user.Id,
                 Email = user.Email,
                 Role = user.Role,
+                AvatarUrl = user.AvatarUrl,
                 Favorites = favorites 
             };
 
             return Ok(userProfile);
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
+        {
+            var userId = GetUserIdFromToken();
+            if (userId == Guid.Empty) return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId); 
+
+            if (user == null) return NotFound();
+
+            user.AvatarUrl = request.NewAvatarUrl;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Аватар успішно оновлено.", avatarUrl = user.AvatarUrl });
+        }
+
 
         [HttpPost("favorites/{smartphoneId:int}")]
         public async Task<IActionResult> AddFavorite(int smartphoneId)
