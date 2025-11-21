@@ -4,9 +4,13 @@ const contentDiv = document.getElementById('content');
 const favoritesList = document.getElementById('favoritesList');
 const logoutBtn = document.getElementById('logoutBtn');
 
+// Елементи Галереї
 const imageModalOverlay = document.getElementById('imageModalOverlay');
 const modalImage = document.getElementById('modalImage');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
+const prevImgBtn = document.getElementById('prevImgBtn');
+const nextImgBtn = document.getElementById('nextImgBtn');
+const imgCounter = document.getElementById('imgCounter');
 
 const API_BASE_URL = 'https://mobix.onrender.com';
 
@@ -14,6 +18,14 @@ const themeToggleBtn = document.getElementById('themeToggleBtn');
 const themeToggleSpan = document.getElementById('themeToggleSpan');
 const htmlElement = document.documentElement;
 const bodyElement = document.body;
+
+// Глобальні змінні
+let enrichedFavorites = []; // ВАЖЛИВО: виніс сюди
+let currentGalleryImages = [];
+let currentImageIndex = 0;
+let touchStartX = 0;
+let touchEndX = 0;
+
 
 if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
     function applyTheme(theme) {
@@ -58,19 +70,95 @@ logoutBtn.addEventListener('click', () => {
     window.location.href = 'index.html';
 });
 
-function openImageModal(src) {
-    if (!imageModalOverlay) return;
-    modalImage.src = src;
+
+const galleryWrapper = document.getElementById('galleryWrapper');
+
+function openImageModal(smartphoneId) {
+    const phone = enrichedFavorites.find(p => p.id === smartphoneId);
+    if (!phone) return;
+
+    currentGalleryImages = [];
+    if (phone.imageUrl) currentGalleryImages.push(phone.imageUrl);
+    
+    if (phone.imageUrl2) currentGalleryImages.push(phone.imageUrl2);
+    if (phone.imageUrl3) currentGalleryImages.push(phone.imageUrl3);
+
+    if (currentGalleryImages.length === 0) {
+        currentGalleryImages.push('https://placehold.co/300x400?text=No+Image');
+    }
+
+    currentImageIndex = 0;
+    
     imageModalOverlay.classList.remove('hidden');
     imageModalOverlay.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    
+    modalImage.src = currentGalleryImages[currentImageIndex];
+    modalImage.className = "pointer-events-auto max-w-[90vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300"; 
+    updateControls();
+}
+
+function updateControls() {
+    if (currentGalleryImages.length > 1) {
+        if(prevImgBtn) prevImgBtn.classList.remove('hidden');
+        if(nextImgBtn) nextImgBtn.classList.remove('hidden');
+        if(imgCounter) {
+            imgCounter.classList.remove('hidden');
+            imgCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
+        }
+    } else {
+        if(prevImgBtn) prevImgBtn.classList.add('hidden');
+        if(nextImgBtn) nextImgBtn.classList.add('hidden');
+        if(imgCounter) imgCounter.classList.add('hidden');
+    }
+}
+
+function changeSlide(direction) {
+    if (currentGalleryImages.length <= 1) return;
+
+    const img = document.getElementById('modalImage');
+    
+    if (direction === 'next') {
+        img.classList.add('slide-out-left');
+    } else {
+        img.classList.add('slide-out-right');
+    }
+
+    setTimeout(() => {
+        if (direction === 'next') {
+            currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
+        } else {
+            currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+        }
+
+        img.src = currentGalleryImages[currentImageIndex];
+
+        img.classList.remove('slide-out-left', 'slide-out-right');
+        
+        if (direction === 'next') {
+            img.classList.add('slide-in-from-right');
+            setTimeout(() => img.classList.remove('slide-in-from-right'), 300);
+        } else {
+            img.classList.add('slide-in-from-left');
+            setTimeout(() => img.classList.remove('slide-in-from-left'), 300);
+        }
+
+        updateControls();
+
+    }, 200);
 }
 
 function closeImageModal() {
-    if (!imageModalOverlay) return;
     imageModalOverlay.classList.add('hidden');
     imageModalOverlay.classList.remove('flex');
     modalImage.src = "";
+    modalImage.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-from-right', 'slide-in-from-left');
+    currentGalleryImages = [];
+    document.body.style.overflow = '';
 }
+
+if(prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
+if(nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
 
 if (modalCloseBtn) {
     modalCloseBtn.addEventListener('click', (e) => {
@@ -78,20 +166,43 @@ if (modalCloseBtn) {
         closeImageModal();
     });
 }
-if (modalImage) {
-    modalImage.addEventListener('click', (e) => {
-        e.stopPropagation();
+
+imageModalOverlay.addEventListener('click', (e) => {
+    if (e.target === imageModalOverlay || e.target === galleryWrapper) {
         closeImageModal();
-    });
-}
-if (imageModalOverlay) {
-    imageModalOverlay.addEventListener('click', (e) => {
-        if (e.target === imageModalOverlay) {
-            closeImageModal();
-        }
-    });
+    }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (imageModalOverlay.classList.contains('hidden')) return;
+    if (e.key === 'ArrowRight') changeSlide('next');
+    if (e.key === 'ArrowLeft') changeSlide('prev');
+    if (e.key === 'Escape') closeImageModal();
+});
+
+if (modalImage) {
+    modalImage.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalImage.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
 }
 
+function handleSwipe() {
+    const swipeThreshold = 40;
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance < 0) {
+            changeSlide('next');
+        } else {
+            changeSlide('prev');
+        }
+    }
+}
 
 function renderFavorites(favorites) {
     favoritesList.innerHTML = '';
@@ -113,7 +224,10 @@ function renderFavorites(favorites) {
 
         card.innerHTML = `
             <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700">
-                <img class="h-44 object-contain cursor-pointer card-image-trigger" src="${phone.imageUrl || 'https://placehold.co/300x200'}" alt="${phone.name}">
+                <img class="h-44 object-contain cursor-pointer card-image-trigger" 
+                     data-id="${phone.id}" 
+                     src="${phone.imageUrl || 'https://placehold.co/300x200'}" 
+                     alt="${phone.name}">
             </div>
             <div class="p-4 flex flex-col justify-between flex-1">
                 <div>
@@ -138,7 +252,6 @@ function renderFavorites(favorites) {
                 </div>
                 
                 <div class="flex mt-3 gap-2">
-                    <!-- Кнопка без анімації наведення тексту, завжди "В обраному" -->
                     <button 
                         data-id="${phone.id}" 
                         class="favorite-remove-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium bg-green-500 text-white hover:bg-green-600">
@@ -181,7 +294,8 @@ function renderFavorites(favorites) {
 
     document.querySelectorAll('.card-image-trigger').forEach(img => {
         img.addEventListener('click', (e) => {
-            openImageModal(e.currentTarget.src);
+            const id = parseInt(e.currentTarget.dataset.id);
+            openImageModal(id);
         });
     });
 }
@@ -213,23 +327,25 @@ async function fetchProfile() {
             allPhones = await phonesResponse.json();
         }
 
-        const enrichedFavorites = profile.favorites.map(favItem => {
+        enrichedFavorites = profile.favorites.map(favItem => {
             const detailedItem = allPhones.find(p => p.id === favItem.id);
 
             return {
                 ...favItem,
                 minPrice: detailedItem ? detailedItem.minPrice : 0,
-
                 maxPrice: detailedItem ? detailedItem.maxPrice : 0,
-
                 storeName: detailedItem ? detailedItem.storeName : '',
-                storeUrl: detailedItem ? detailedItem.storeUrl : ''
+                storeUrl: detailedItem ? detailedItem.storeUrl : '',
+                imageUrl2: detailedItem ? detailedItem.imageUrl2 : null,
+                imageUrl3: detailedItem ? detailedItem.imageUrl3 : null
             };
         });
 
         document.getElementById('userEmail').textContent = `Привіт, ${profile.email}!`;
         document.getElementById('userRole').textContent = profile.role;
         document.getElementById('userId').textContent = profile.id;
+        const avatarImg = document.getElementById('userAvatar');
+        avatarImg.src = profile.avatarUrl || 'https://placehold.co/100x100?text=👤';
 
         renderFavorites(enrichedFavorites);
 
@@ -239,6 +355,41 @@ async function fetchProfile() {
     } catch (err) {
         console.error(err);
     }
+}
+
+const userAvatarFn = document.getElementById('userAvatar');
+if (userAvatarFn) {
+    userAvatarFn.parentElement.addEventListener('click', async () => {
+        const newAvatarUrl = prompt("Введіть посилання (URL) на нове зображення:", userAvatarFn.src);
+
+        if (!newAvatarUrl || newAvatarUrl.trim() === "") return;
+
+        if (!newAvatarUrl.startsWith('http')) {
+            alert("Будь ласка, введіть коректне посилання (починається з http...)");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/users/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ newAvatarUrl: newAvatarUrl })
+            });
+
+            if (response.ok) {
+                userAvatarFn.src = newAvatarUrl;
+                alert("Аватар успішно оновлено!");
+            } else {
+                alert("Помилка оновлення аватара.");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Помилка з'єднання з сервером.");
+        }
+    });
 }
 
 fetchProfile();

@@ -31,6 +31,9 @@ const bodyElement = document.body;
 const imageModalOverlay = document.getElementById('imageModalOverlay');
 const modalImage = document.getElementById('modalImage');
 const modalCloseBtn = document.getElementById('modalCloseBtn');
+const prevImgBtn = document.getElementById('prevImgBtn');
+const nextImgBtn = document.getElementById('nextImgBtn');
+const imgCounter = document.getElementById('imgCounter');
 
 const scrollBtn = document.getElementById('scrollBtn');
 const scrollBtnIcon = document.getElementById('scrollBtnIcon');
@@ -41,6 +44,11 @@ let allSmartphones = [];
 let userFavorites = new Set();
 let token = localStorage.getItem('mobix_jwt_token');
 let currentSortValue = 'name';
+
+let currentGalleryImages = [];
+let currentImageIndex = 0;
+let touchStartX = 0;
+let touchEndX = 0;
 
 if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
 
@@ -97,9 +105,7 @@ function renderAuthButtons(isLoggedIn) {
                 </button>
                 
                 <div id="dropdownMenu" class="absolute right-0 mt-2 bg-white rounded-md shadow-lg py-2 hidden z-20 border border-gray-100 dark:bg-gray-800 dark:border-gray-700 w-28 sm:w-full text-center flex flex-col gap-1 p-1">
-                    <!-- Збільшений шрифт для ПК (lg:text-base lg:font-bold) -->
                     <a href="account.html" class="block px-4 py-2 text-sm lg:text-base lg:font-bold text-gray-700 hover:bg-gray-100 rounded-md dark:text-gray-200 dark:hover:bg-gray-700">Профіль</a>
-                    
                     <button id="logoutDropdownBtn" class="w-full block px-4 py-2 text-sm lg:text-base lg:font-bold rounded-md bg-red-200 text-gray-800 hover:bg-red-300 transition dark:bg-red-900 dark:text-gray-100 dark:hover:bg-red-800">Вихід</button>
                 </div>
             </div>
@@ -250,7 +256,10 @@ function renderCards(items) {
 
         card.innerHTML = `
                 <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700">
-                    <img class="h-44 object-contain cursor-pointer card-image-trigger" src="${phone.imageUrl || 'https://placehold.co/300x200'}" alt="${phone.name}">
+                    <img class="h-44 object-contain cursor-pointer card-image-trigger" 
+                         data-id="${phone.id}" 
+                         src="${phone.imageUrl || 'https://placehold.co/300x200'}" 
+                         alt="${phone.name}">
                 </div>
                 <div class="p-4 flex flex-col justify-between flex-1">
                     <div>
@@ -305,7 +314,8 @@ function renderCards(items) {
 
     document.querySelectorAll('.card-image-trigger').forEach(img => {
         img.addEventListener('click', (e) => {
-            openImageModal(e.currentTarget.src);
+            const id = parseInt(e.currentTarget.dataset.id);
+            openImageModal(id);
         });
     });
 }
@@ -454,9 +464,7 @@ if (sortSelectMobile) {
 
     sortSelectMobile.addEventListener('change', (e) => {
         currentSortValue = e.target.value;
-
         updateMobileSelectIcon(currentSortValue);
-
         fetchSmartphones(currentSortValue);
 
         const selectedOption = document.querySelector(`.sort-option[data-value="${currentSortValue}"]`);
@@ -483,33 +491,140 @@ searchInput.addEventListener("input", filterAndRender);
 searchInputMobile.addEventListener("input", filterAndRender);
 
 
-function openImageModal(src) {
-    modalImage.src = src;
+
+const galleryWrapper = document.getElementById('galleryWrapper');
+
+function openImageModal(smartphoneId) {
+    const phone = allSmartphones.find(p => p.id === smartphoneId);
+    if (!phone) return;
+
+    currentGalleryImages = [];
+    if (phone.imageUrl) currentGalleryImages.push(phone.imageUrl);
+
+    if (phone.imageUrl2) currentGalleryImages.push(phone.imageUrl2);
+    if (phone.imageUrl3) currentGalleryImages.push(phone.imageUrl3);
+
+    if (currentGalleryImages.length === 0) {
+        currentGalleryImages.push('https://placehold.co/300x400?text=No+Image');
+    }
+
+    currentImageIndex = 0;
+    
     imageModalOverlay.classList.remove('hidden');
     imageModalOverlay.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    
+    modalImage.src = currentGalleryImages[currentImageIndex];
+    modalImage.className = "pointer-events-auto max-w-[95vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300"; // Скидаємо класи анімації
+    updateControls();
+}
+
+function updateControls() {
+    if (currentGalleryImages.length > 1) {
+        if(prevImgBtn) prevImgBtn.classList.remove('hidden');
+        if(nextImgBtn) nextImgBtn.classList.remove('hidden');
+        if(imgCounter) {
+            imgCounter.classList.remove('hidden');
+            imgCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
+        }
+    } else {
+        if(prevImgBtn) prevImgBtn.classList.add('hidden');
+        if(nextImgBtn) nextImgBtn.classList.add('hidden');
+        if(imgCounter) imgCounter.classList.add('hidden');
+    }
+}
+
+function changeSlide(direction) {
+    if (currentGalleryImages.length <= 1) return;
+
+    const img = document.getElementById('modalImage');
+    
+    if (direction === 'next') {
+        img.classList.add('slide-out-left');
+    } else {
+        img.classList.add('slide-out-right');
+    }
+
+    setTimeout(() => {
+        if (direction === 'next') {
+            currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
+        } else {
+            currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+        }
+
+        img.src = currentGalleryImages[currentImageIndex];
+
+        img.classList.remove('slide-out-left', 'slide-out-right');
+        
+        if (direction === 'next') {
+            img.classList.add('slide-in-from-right');
+            setTimeout(() => img.classList.remove('slide-in-from-right'), 300);
+        } else {
+            img.classList.add('slide-in-from-left');
+            setTimeout(() => img.classList.remove('slide-in-from-left'), 300);
+        }
+
+        updateControls();
+
+    }, 200);
 }
 
 function closeImageModal() {
     imageModalOverlay.classList.add('hidden');
     imageModalOverlay.classList.remove('flex');
     modalImage.src = "";
+    modalImage.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-from-right', 'slide-in-from-left');
+    currentGalleryImages = [];
+    document.body.style.overflow = '';
 }
 
-modalCloseBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeImageModal();
-});
+if(prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
+if(nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
 
-modalImage.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeImageModal();
-});
+if (modalCloseBtn) {
+    modalCloseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeImageModal();
+    });
+}
 
 imageModalOverlay.addEventListener('click', (e) => {
-    if (e.target === imageModalOverlay) {
+    if (e.target === imageModalOverlay || e.target === galleryWrapper) {
         closeImageModal();
     }
 });
+
+document.addEventListener('keydown', (e) => {
+    if (imageModalOverlay.classList.contains('hidden')) return;
+    if (e.key === 'ArrowRight') changeSlide('next');
+    if (e.key === 'ArrowLeft') changeSlide('prev');
+    if (e.key === 'Escape') closeImageModal();
+});
+
+if (modalImage) {
+    modalImage.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    modalImage.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+}
+
+function handleSwipe() {
+    const swipeThreshold = 40;
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance < 0) {
+            changeSlide('next');
+        } else {
+            changeSlide('prev');
+        }
+    }
+}
+
 
 if (scrollBtn && scrollBtnIcon) {
 
@@ -562,7 +677,8 @@ function showSkeletons(count = 16) {
 
         skeleton.className =
             "bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 animate-pulse flex flex-col " +
-            "w-full sm:min-w-[240px] md:min-w-[260px] lg:min-w-[294px] h-[416px]";
+            "w-[326px] mx-auto sm:w-full " + 
+            "sm:min-w-[240px] md:min-w-[260px] lg:min-w-[294px] h-[416px]";
 
         skeleton.innerHTML = `
             <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-xl mb-5"></div>
