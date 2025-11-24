@@ -251,53 +251,86 @@ function renderCards(items) {
         const storeUrl = phone.minPrice > 0 ? phone.storeUrl : '#';
         const isFavorite = userFavorites.has(phone.id);
 
+        const showPriceRange = phone.maxPrice && phone.maxPrice > phone.minPrice;
+        const priceAlignmentClass = showPriceRange ? "text-left" : "text-center";
+
+        let specsHTML = '';
+
+        if (phone.displaySize) {
+            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">Дисплей:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.displaySize}" ${phone.displayHz ? `(${phone.displayHz}Hz)` : ''}</span></div>`;
+        }
+        if (phone.ram) {
+            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">RAM:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.ram}</span></div>`;
+        }
+        if (phone.storage) {
+            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">Пам'ять:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.storage}</span></div>`;
+        }
+
+        if (specsHTML === '') {
+            specsHTML = '<span class="text-gray-400 italic">Характеристики не вказані</span>';
+        }
+
         const card = document.createElement("div");
-        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-xl duration-300 dark:bg-gray-800";
+        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-xl duration-300 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 h-full";
 
         card.innerHTML = `
-                <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700">
-                    <img class="h-44 object-contain cursor-pointer card-image-trigger" 
+                <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700 h-48 flex-shrink-0 relative">
+                    <img class="h-full w-full object-contain cursor-pointer card-image-trigger transition-transform duration-300 hover:scale-105" 
                          data-id="${phone.id}" 
                          src="${phone.imageUrl || 'https://placehold.co/300x200'}" 
                          alt="${phone.name}">
                 </div>
-                <div class="p-4 flex flex-col justify-between flex-1">
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">${phone.name}</h2>
-                        <p class="text-gray-500 text-sm dark:text-gray-400">${phone.manufacturer || ''}</p>
-                        
-                        <p class="mt-2 text-green-600 text-lg font-bold">
-    ${phone.minPrice > 0
-                ? `від <span class="underline">${phone.minPrice.toFixed(0)}</span>`
-                : 'Ціна не знайдена'}
-    
-    ${phone.maxPrice && phone.maxPrice > phone.minPrice
-                ? ` до <span class="underline">${phone.maxPrice.toFixed(0)}</span>`
-                : ''}
-    
-    ${phone.minPrice > 0 ? 'грн' : ''}
-</p>
-                        
-                        <p class="text-gray-500 text-sm mt-1 dark:text-gray-400">
-                            ${phone.storeName ? `Найнижча ціна у: <b>${phone.storeName}</b>` : ''}
-                        </p>
+
+                <div class="p-4 flex flex-col flex-1">
+                    
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 h-14 overflow-hidden line-clamp-2 leading-tight mb-1" title="${phone.name}">
+                        ${phone.name}
+                    </h2>
+                    
+                    <p class="text-gray-500 text-xs uppercase tracking-wide font-bold dark:text-gray-400 mb-3">
+                        ${phone.manufacturer || ''}
+                    </p>
+
+                    <div class="text-xs space-y-1 mb-4 border-t border-gray-100 dark:border-gray-700 pt-2">
+                        ${specsHTML}
                     </div>
                     
-                    <div class="flex mt-3 gap-2">
-                        <button 
-                            data-id="${phone.id}" 
-                            data-isfavorite="${isFavorite}"
-                            class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium
-                            ${isFavorite ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
-                            <img src="${isFavorite ? 'public/assets/icon-star-selected.png' : 'public/assets/icon-star.png'}" alt="Star" class="w-4 h-4">
-                            <span>${isFavorite ? 'В обраному' : 'Додати'}</span>
-                        </button>
+                    <div class="mt-auto w-full">
                         
-                        <a href="${storeUrl}" target="_blank"
-                            class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm font-medium
-                            ${phone.minPrice === 0 ? 'opacity-50 pointer-events-none' : ''}">
-                            ${phone.minPrice > 0 ? 'Купити' : 'Н/Д'}
-                        </a>
+                        <div class="${priceAlignmentClass} mb-1">
+                            <p class="text-green-600 text-lg font-bold leading-tight">
+                                ${phone.minPrice > 0
+                ? `від <span class="underline">${phone.minPrice.toFixed(0)}</span>`
+                : 'Ціна не знайдена'}
+                                
+                                ${showPriceRange
+                ? ` до <span class="underline">${phone.maxPrice.toFixed(0)}</span>`
+                : ''}
+                                
+                                ${phone.minPrice > 0 ? 'грн' : ''}
+                            </p>
+                        </div>
+                        
+                        <p class="text-gray-500 text-xs mb-3 dark:text-gray-400 h-4 overflow-hidden text-left whitespace-nowrap text-ellipsis">
+                            ${phone.storeName ? `Найнижча ціна у: <b>${phone.storeName}</b>` : '&nbsp;'}
+                        </p>
+                        
+                        <div class="flex gap-2">
+    <button 
+        data-id="${phone.id}" 
+        data-isfavorite="${isFavorite}"
+        class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium
+        ${isFavorite ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
+        <img src="${isFavorite ? 'public/assets/icon-star-selected.png' : 'public/assets/icon-star.png'}" alt="Star" class="w-4 h-4">
+        <span>${isFavorite ? 'В обраному' : 'Додати'}</span>
+    </button>
+    
+    <a href="${storeUrl}" target="_blank"
+        class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm font-medium flex items-center justify-center
+        ${phone.minPrice === 0 ? 'opacity-50 pointer-events-none' : ''}">
+        ${phone.minPrice > 0 ? 'Купити' : 'Н/Д'}
+    </a>
+</div>
                     </div>
                 </div>
             `;
@@ -509,11 +542,11 @@ function openImageModal(smartphoneId) {
     }
 
     currentImageIndex = 0;
-    
+
     imageModalOverlay.classList.remove('hidden');
     imageModalOverlay.classList.add('flex');
     document.body.style.overflow = 'hidden';
-    
+
     modalImage.src = currentGalleryImages[currentImageIndex];
     modalImage.className = "pointer-events-auto max-w-[95vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300"; // Скидаємо класи анімації
     updateControls();
@@ -521,16 +554,16 @@ function openImageModal(smartphoneId) {
 
 function updateControls() {
     if (currentGalleryImages.length > 1) {
-        if(prevImgBtn) prevImgBtn.classList.remove('hidden');
-        if(nextImgBtn) nextImgBtn.classList.remove('hidden');
-        if(imgCounter) {
+        if (prevImgBtn) prevImgBtn.classList.remove('hidden');
+        if (nextImgBtn) nextImgBtn.classList.remove('hidden');
+        if (imgCounter) {
             imgCounter.classList.remove('hidden');
             imgCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
         }
     } else {
-        if(prevImgBtn) prevImgBtn.classList.add('hidden');
-        if(nextImgBtn) nextImgBtn.classList.add('hidden');
-        if(imgCounter) imgCounter.classList.add('hidden');
+        if (prevImgBtn) prevImgBtn.classList.add('hidden');
+        if (nextImgBtn) nextImgBtn.classList.add('hidden');
+        if (imgCounter) imgCounter.classList.add('hidden');
     }
 }
 
@@ -538,7 +571,7 @@ function changeSlide(direction) {
     if (currentGalleryImages.length <= 1) return;
 
     const img = document.getElementById('modalImage');
-    
+
     if (direction === 'next') {
         img.classList.add('slide-out-left');
     } else {
@@ -555,7 +588,7 @@ function changeSlide(direction) {
         img.src = currentGalleryImages[currentImageIndex];
 
         img.classList.remove('slide-out-left', 'slide-out-right');
-        
+
         if (direction === 'next') {
             img.classList.add('slide-in-from-right');
             setTimeout(() => img.classList.remove('slide-in-from-right'), 300);
@@ -578,8 +611,8 @@ function closeImageModal() {
     document.body.style.overflow = '';
 }
 
-if(prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
-if(nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
+if (prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
+if (nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
 
 if (modalCloseBtn) {
     modalCloseBtn.addEventListener('click', (e) => {
@@ -677,7 +710,7 @@ function showSkeletons(count = 16) {
 
         skeleton.className =
             "bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 animate-pulse flex flex-col " +
-            "w-[326px] mx-auto sm:w-full " + 
+            "w-[326px] mx-auto sm:w-full " +
             "sm:min-w-[240px] md:min-w-[260px] lg:min-w-[294px] h-[416px]";
 
         skeleton.innerHTML = `

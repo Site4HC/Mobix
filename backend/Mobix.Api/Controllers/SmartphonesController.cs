@@ -91,6 +91,8 @@ namespace Mobix.Api.Controllers
                     Name = data.Smartphone.Name,
                     Manufacturer = data.Smartphone.Manufacturer,
                     ImageUrl = data.Smartphone.ImageUrl,
+                    ImageUrl2 = data.Smartphone.ImageUrl2,
+                    ImageUrl3 = data.Smartphone.ImageUrl3,
                     MinPrice = data.BestPriceEntry.Price,
                     StoreName = data.BestPriceEntry.Store.Name,
                     StoreUrl = data.BestPriceEntry.ProductUrl,
