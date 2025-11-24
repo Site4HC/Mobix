@@ -2,8 +2,6 @@ using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.Net.Http; 
 using System.Threading.Tasks;
-using System;
-using System.Net; 
 
 namespace Mobix.Api.Services
 {
@@ -21,24 +19,7 @@ namespace Mobix.Api.Services
             try
             {
                 var httpClient = _httpClientFactory.CreateClient("ParserClient");
-                
-                httpClient.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
-                httpClient.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
-                httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-                httpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-                
-                var response = await httpClient.GetAsync(url);
-
-                if (response.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    Console.WriteLine($"Помилка: Запит до {url} заблоковано (403 Forbidden).");
-                    return null;
-                }
-
-                response.EnsureSuccessStatusCode();
-                
-                var html = await response.Content.ReadAsStringAsync();
-                
+                var html = await httpClient.GetStringAsync(url);
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
                 return doc;
@@ -57,7 +38,7 @@ namespace Mobix.Api.Services
                 return string.Empty;
             }
 
-            var sanitized = WebUtility.HtmlDecode(input); 
+            var sanitized = HtmlEntity.DeEntitize(input);
             sanitized = Regex.Replace(sanitized, @"\s+", " ").Trim();
             return sanitized;
         }
@@ -75,16 +56,16 @@ namespace Mobix.Api.Services
 
         protected string BuildFullUrl(string baseUrl, string relativeUrl)
         {
-            if (string.IsNullOrWhiteSpace(relativeUrl))
+            if (string.IsNullOrEmpty(relativeUrl))
                 return baseUrl;
 
-            if (relativeUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            if (relativeUrl.StartsWith("http"))
                 return relativeUrl;
 
             try
             {
-                var baseUri = new Uri(baseUrl.TrimEnd('/'));
-                var fullUri = new Uri(baseUri, relativeUrl.TrimStart('/'));
+                var baseUri = new Uri(baseUrl);
+                var fullUri = new Uri(baseUri, relativeUrl);
                 return fullUri.ToString();
             }
             catch
