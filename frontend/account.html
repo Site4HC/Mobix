@@ -45,17 +45,53 @@
   </header>
 
   <main class="flex-grow max-w-7xl mx-auto px-4 py-10 w-full space-y-10">
-    <div id="loading" class="text-center text-gray-500 text-xl dark:text-gray-400">Завантаження профілю...</div>
 
-    <div id="content" class="hidden space-y-10">
-
-      <section
-        class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+    <div id="profileSkeletonWrapper" class="mt-[40px]">
+      <div id="profileSkeleton"
+        class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden animate-pulse">
 
         <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
           <div class="flex-shrink-0">
-            <img src="https://placehold.co/100x100?text=👤" alt="Avatar"
-              class="w-24 h-24 rounded-full border border-gray-200 object-cover" />
+            <div class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          </div>
+          <div class="flex-1 text-center sm:text-left w-full space-y-2">
+            <div class="h-8 w-48 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0"></div>
+            <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0"></div>
+            <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded mx-auto sm:mx-0 mt-1"></div>
+          </div>
+        </div>
+
+        <hr class="border-gray-200 dark:border-gray-700">
+
+        <div class="p-6">
+          <div class="h-7 w-64 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+            <div class="h-[400px] w-full bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="content" class="hidden space-y-10">
+      <section
+        class="bg-white rounded-xl shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+        <div class="p-6 flex flex-col sm:flex-row items-center gap-6">
+          <div class="flex-shrink-0 relative group cursor-pointer w-24 h-24">
+            <img id="userAvatar" src="https://placehold.co/100x100?text=👤" alt="Avatar"
+              class="w-full h-full rounded-full border border-gray-200 object-cover transition duration-300 group-hover:opacity-50" />
+
+            <div
+              class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+              <img src="public/assets/icon-edit.png" onerror="this.style.display='none'" alt="Edit"
+                class="w-8 h-8 opacity-80">
+              <span class="absolute text-xs font-bold text-gray-700 bg-white/80 px-1 rounded">Змінити</span>
+            </div>
+
+            <input type="file" id="avatarInput" class="hidden">
           </div>
           <div class="flex-1 text-center sm:text-left">
             <h2 id="userEmail" class="text-2xl font-bold text-gray-800 dark:text-gray-100">Привіт!</h2>
@@ -81,10 +117,41 @@
             </p>
           </div>
         </div>
-
       </section>
     </div>
   </main>
+
+  <div id="imageModalOverlay" class="fixed inset-0 bg-black/80 hidden z-[60] items-center justify-center transition-opacity duration-300">
+    
+    <div id="galleryWrapper" class="relative group flex items-center justify-center pointer-events-none max-w-full max-h-full">
+        
+        <img id="modalImage" src="" alt="Галерея" 
+             class="pointer-events-auto max-w-[90vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300">
+
+        <button id="prevImgBtn" class="pointer-events-auto absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+        </button>
+
+        <button id="nextImgBtn" class="pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+        </button>
+
+        <button id="modalCloseBtn" class="pointer-events-auto absolute top-2 right-2 z-30 bg-black/40 hover:bg-red-600/80 text-white rounded-full p-2 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <div id="imgCounter" class="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm opacity-100 transition-opacity duration-300">
+            1 / 1
+        </div>
+
+    </div>
+  </div>
 
   <footer class="bg-gray-900 text-white text-center py-4 mt-auto dark:bg-gray-950">
     <p class="text-sm">© 2025 Mobix — Порівняй і обери найкраще 📱</p>
