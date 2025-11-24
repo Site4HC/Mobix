@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Mobix.Api.DTOs;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 
 namespace Mobix.Api.Controllers
 {
@@ -23,7 +24,12 @@ namespace Mobix.Api.Controllers
             [FromQuery] string sortBy, 
             [FromQuery] string manufacturer,
             [FromQuery] decimal? minPrice,
-            [FromQuery] decimal? maxPrice)
+            [FromQuery] decimal? maxPrice,
+            [FromQuery] string ram,
+            [FromQuery] string storage,
+            [FromQuery] string displaySize,
+            [FromQuery] int? displayHz)
+            
         {
             var smartphonesQuery = _context.Smartphones.AsQueryable();
 
@@ -45,13 +51,13 @@ namespace Mobix.Api.Controllers
                 .Select(s => new {
                     Smartphone = s,
                     BestPriceEntry = _context.PriceHistories
-                                        .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
-                                        .OrderBy(ph => ph.Price)
-                                        .Include(ph => ph.Store)
-                                        .FirstOrDefault(),
+                                         .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
+                                         .OrderBy(ph => ph.Price)
+                                         .Include(ph => ph.Store)
+                                         .FirstOrDefault(),
                     MaxPriceValue = _context.PriceHistories
-                                        .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
-                                        .Max(ph => (decimal?)ph.Price) 
+                                         .Where(ph => ph.SmartphoneId == s.Id && ph.CollectionDate >= cutoffDate)
+                                         .Max(ph => (decimal?)ph.Price) 
                 })
                 .Where(data => data.BestPriceEntry != null); 
 
@@ -64,6 +70,28 @@ namespace Mobix.Api.Controllers
             {
                 dataQuery = dataQuery.Where(data => data.MaxPriceValue.HasValue && data.MaxPriceValue.Value <= maxPrice.Value);
             }
+            
+            // Фільтрація за характеристиками
+            if (!string.IsNullOrEmpty(ram))
+            {
+                dataQuery = dataQuery.Where(d => d.Smartphone.Ram == ram);
+            }
+
+            if (!string.IsNullOrEmpty(storage))
+            {
+                dataQuery = dataQuery.Where(d => d.Smartphone.Storage == storage);
+            }
+
+            if (displayHz.HasValue)
+            {
+                dataQuery = dataQuery.Where(d => d.Smartphone.DisplayHz.HasValue && d.Smartphone.DisplayHz.Value >= displayHz.Value);
+            }
+
+            if (!string.IsNullOrEmpty(displaySize) && decimal.TryParse(displaySize, out decimal size))
+            {
+                dataQuery = dataQuery.Where(d => d.Smartphone.DisplaySize != null && decimal.Parse(d.Smartphone.DisplaySize) <= size);
+            }
+
 
             switch (sortBy?.ToLower())
             {
@@ -98,9 +126,9 @@ namespace Mobix.Api.Controllers
                     StoreUrl = data.BestPriceEntry.ProductUrl,
                     MaxPrice = data.MaxPriceValue ?? data.BestPriceEntry.Price ,
                     Ram = data.Smartphone.Ram, 
+                    Storage = data.Smartphone.Storage,
                     DisplaySize = data.Smartphone.DisplaySize,
-                    DisplayHz = data.Smartphone.DisplayHz,
-                    Storage = data.Smartphone.Storage
+                    DisplayHz = data.Smartphone.DisplayHz
                 })
                 .ToListAsync();
 
