@@ -29,7 +29,18 @@ namespace Mobix.Api.Data
                 {
                     var smartphones = new List<Smartphone>
                     {
-                        new Smartphone { Name = "Apple iPhone 17 Pro Max 256GB", Manufacturer = "Apple", ImageUrl = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone-17-pro-finish-select-202509-6-9inch-silver_result_2.webp" },
+                        new Smartphone 
+                        { 
+                            Name = "Apple iPhone 17 Pro Max 256GB", 
+                            Manufacturer = "Apple", 
+                            ImageUrl = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone-17-pro-finish-select-202509-6-9inch-silver_result_2.webp", 
+                            ImageUrl2 = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone-17-pro-finish-select-202509-6-9inch-silver_av1_result.webp",
+                            ImageUrl3 = "https://i.allo.ua/media/catalog/product/cache/3/image/2000x2000/af097278c5db4767b0fe9bb92fe21690/i/p/iphone-17-pro-finish-select-202509-6-9inch-silver_av3_result.webp",
+                            Ram = "8GB", 
+                            Storage = "256GB", 
+                            DisplaySize = "6.9", 
+                            DisplayHz = 120 ,
+                        },
                         new Smartphone { Name = "Apple iPhone 17 Pro 256GB", Manufacturer = "Apple", ImageUrl = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone-17-pro-finish-select-202509-6-3inch-silver_result.webp" },
                         new Smartphone { Name = "Apple iPhone 17 256GB", Manufacturer = "Apple", ImageUrl = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone-17-storage-select-202509-white_result.webp" },
                         new Smartphone { Name = "Apple iPhone 16 Pro Max 256GB", Manufacturer = "Apple", ImageUrl = "https://i.allo.ua/media/catalog/product/cache/3/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/i/p/iphone_16_pro_max_black_titanium_pdp_image_position_1__ce-ww_1.webp" },

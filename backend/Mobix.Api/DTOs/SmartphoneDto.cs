@@ -13,5 +13,9 @@ namespace Mobix.Api.DTOs
         public string StoreUrl { get; set; }  
         public string ImageUrl2 { get; set; }
         public string ImageUrl3 { get; set; }
+        public string Ram { get; set; }
+        public string DisplaySize { get; set; }
+        public int? DisplayHz { get; set; }
+        public string Storage { get; set; }
     }
 }

@@ -22,6 +22,16 @@ namespace Mobix.Api.Models
 
         [StringLength(500)]
         public string ImageUrl3 { get; set; } 
+        [StringLength(10)]
+        public string Ram { get; set; }
+
+        [StringLength(10)]
+        public string DisplaySize { get; set; }
+
+        public int? DisplayHz { get; set; }
+        
+        [StringLength(10)]
+        public string Storage { get; set; }
 
         public ICollection<PriceHistory> PriceHistories { get; set; }
     }

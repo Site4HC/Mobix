@@ -94,7 +94,11 @@ namespace Mobix.Api.Controllers
                     MinPrice = data.BestPriceEntry.Price,
                     StoreName = data.BestPriceEntry.Store.Name,
                     StoreUrl = data.BestPriceEntry.ProductUrl,
-                    MaxPrice = data.MaxPriceValue ?? data.BestPriceEntry.Price 
+                    MaxPrice = data.MaxPriceValue ?? data.BestPriceEntry.Price ,
+                    Ram = data.Smartphone.Ram, 
+                    DisplaySize = data.Smartphone.DisplaySize,
+                    DisplayHz = data.Smartphone.DisplayHz,
+                    Storage = data.Smartphone.Storage
                 })
                 .ToListAsync();
 
