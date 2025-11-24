@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mobix.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124132339_AddStorageField")]
-    partial class AddStorageField
+    [Migration("20251124135423_FinalSync")]
+    partial class FinalSync
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
