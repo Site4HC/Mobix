@@ -64,7 +64,7 @@ builder.Services.AddHttpClient("ParserClient", client =>
         client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
 });
 
-builder.Services.AddScoped<IStoreParserService, AlloParserService>();
+builder.Services.AddScoped<IStoreParserService, StylusParserService>();
 builder.Services.AddScoped<IStoreParserService, FoxtrotParserService>();
 builder.Services.AddScoped<IStoreParserService, CitrusParserService>();
 builder.Services.AddScoped<IStoreParserService, MoyoParserService>();

@@ -17,7 +17,7 @@ namespace Mobix.Api.Data
                 {
                     var stores = new List<Store>
                     {
-                        new Store { Name = "Allo", BaseUrl = "https://allo.ua/" },
+                        new Store { Name = "Stylus", BaseUrl = "https://stylus.ua/" },
                         new Store { Name = "Foxtrot", BaseUrl = "https://www.foxtrot.com.ua/" },
                         new Store { Name = "Citrus", BaseUrl = "https://www.citrus.com.ua/" },
                         new Store { Name = "Moyo", BaseUrl = "https://www.moyo.ua/" },
