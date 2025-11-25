@@ -1,8 +1,10 @@
 using HtmlAgilityPack;
-using Mobix.Api.DTOs;
 using Mobix.Api.Models;
-using System.Web;
-
+using System;
+using System.Linq;
+using System.Web; 
+using System.Threading.Tasks;
+using Mobix.Api.DTOs; 
 
 namespace Mobix.Api.Services
 {
@@ -17,61 +19,62 @@ namespace Mobix.Api.Services
         {
             try
             {
-                string searchTerm = Uri.EscapeDataString(smartphone.Name);
-                string searchUrl = $"{storeBaseUrl}search?q={searchTerm}";
-
+                string searchTerm = Uri.EscapeDataString(SanitizeString(smartphone.Name)); 
+                string searchUrl = $"{storeBaseUrl}search?q={searchTerm}"; 
+                
                 var doc = await FetchHtmlDocument(searchUrl);
                 if (doc == null)
                 {
-                    return new ParserResult
+                    return new ParserResult 
                     {
                         IsSuccess = false,
-                        ErrorMessage = "Не вдалося завантажити сторінку Stylus"
+                        ErrorMessage = "Не вдалося завантажити сторінку Stylus (404 або помилка з'єднання)"
                     };
                 }
 
-                var productNode = doc.DocumentNode.SelectSingleNode(
-                    "//div[contains(@class, 'product-item')]" +
-                    "[.//a[contains(@class, 'product-item__title')]]" +
-                    "[.//div[contains(@class, 'product-item__price')]]"
+                var productContainer = doc.DocumentNode.SelectSingleNode(
+                    "//a[contains(@class, 'product-list-item')][1]"
                 );
-
-                if (productNode == null)
+                
+                if (productContainer == null)
                 {
-                    return new ParserResult
+                    return new ParserResult 
                     {
                         IsSuccess = false,
                         ErrorMessage = "Товар (смартфон) не знайдено на Stylus"
                     };
                 }
 
-                var priceNode = productNode.SelectSingleNode(".//div[contains(@class,'price') or contains(@class,'product-item__price')]");
+                var priceNode = productContainer.SelectSingleNode(
+                    ".//div[contains(@class, 'jxAkLj')]" 
+                );
 
-                if (priceNode == null)
+                var nameNode = productContainer.SelectSingleNode(
+                    ".//div[contains(@class, 'hONXRU')]"
+                );
+
+                string rawUrl = productContainer.GetAttributeValue("href", null);
+
+                if (priceNode == null || nameNode == null || string.IsNullOrEmpty(rawUrl))
                 {
-                    return new ParserResult
+                    return new ParserResult 
                     {
                         IsSuccess = false,
-                        ErrorMessage = "Ціну не знайдено"
+                        ErrorMessage = "Не вдалося вилучити ціну/назву/URL зі знайденої картки товару."
                     };
                 }
-
-                string rawPrice = SanitizePrice(priceNode.InnerText);
-
-                var nameNode = productNode.SelectSingleNode(".//a[contains(@class,'product-item__title')]");
-                string foundName = (nameNode != null)
-                    ? SanitizeString(nameNode.InnerText)
-                    : smartphone.Name;
-
-                string rawUrl = nameNode?.GetAttributeValue("href", null);
+                
+                string rawPrice = priceNode.InnerText;
+                string priceString = SanitizePrice(rawPrice);
+                string foundName = SanitizeString(nameNode.InnerText);
                 string productUrl = BuildFullUrl(storeBaseUrl, rawUrl);
 
-                if (!decimal.TryParse(rawPrice, out decimal price) || price < MIN_SMARTPHONE_PRICE)
+                if (!decimal.TryParse(priceString, out decimal price) || price < MIN_SMARTPHONE_PRICE)
                 {
                     return new ParserResult
                     {
                         IsSuccess = false,
-                        ErrorMessage = $"Невдале розпізнавання ціни < {MIN_SMARTPHONE_PRICE}. Знайдено: {rawPrice}"
+                        ErrorMessage = $"Невдале розпізнавання ціни (< {MIN_SMARTPHONE_PRICE}). Знайдено: {rawPrice}"
                     };
                 }
 
