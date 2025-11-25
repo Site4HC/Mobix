@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mobix.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalFixModel : Migration
+    public partial class AddSomeColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

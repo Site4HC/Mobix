@@ -17,8 +17,8 @@ namespace Mobix.Api.Services
         {
             try
             {
-                string searchTerm = HttpUtility.UrlEncode(smartphone.Name);
-                string searchUrl = $"{storeBaseUrl}search?query={searchTerm}";
+                string searchTerm = Uri.EscapeDataString(smartphone.Name);
+                string searchUrl = $"{storeBaseUrl}search?q={searchTerm}";
 
                 var doc = await FetchHtmlDocument(searchUrl);
                 if (doc == null)

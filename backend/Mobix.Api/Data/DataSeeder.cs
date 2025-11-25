@@ -1,5 +1,7 @@
 using Mobix.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder; 
+using Microsoft.Extensions.DependencyInjection; 
 
 namespace Mobix.Api.Data
 {
@@ -11,7 +13,15 @@ namespace Mobix.Api.Data
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 
-                await context.Database.EnsureCreatedAsync();
+                try
+                {
+                    await context.Database.EnsureCreatedAsync(); 
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Помилка при EnsureCreatedAsync (Імовірно, таблиці існують): {ex.Message}");
+                }
+
 
                 if (!await context.Stores.AnyAsync())
                 {

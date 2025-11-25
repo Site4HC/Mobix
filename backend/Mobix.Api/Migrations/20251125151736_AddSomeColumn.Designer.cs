@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mobix.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124143551_FinalFixModel")]
-    partial class FinalFixModel
+    [Migration("20251125151736_AddSomeColumn")]
+    partial class AddSomeColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
