@@ -121,34 +121,47 @@
     </div>
   </main>
 
-  <div id="imageModalOverlay" class="fixed inset-0 bg-black/80 hidden z-[60] items-center justify-center transition-opacity duration-300">
-    
-    <div id="galleryWrapper" class="relative group flex items-center justify-center pointer-events-none max-w-full max-h-full">
-        
-        <img id="modalImage" src="" alt="Галерея" 
-             class="pointer-events-auto max-w-[90vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300">
+  <div id="imageModalOverlay"
+    class="fixed inset-0 bg-black/80 hidden z-[60] items-center justify-center transition-opacity duration-300">
 
-        <button id="prevImgBtn" class="pointer-events-auto absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-              </svg>
-        </button>
+    <div id="galleryWrapper"
+      class="relative group flex items-center justify-center pointer-events-none max-w-full max-h-full">
 
-        <button id="nextImgBtn" class="pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-              </svg>
-        </button>
+      <img id="modalImage" src="" alt="Галерея"
+        class="pointer-events-auto max-w-[90vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300">
 
-        <button id="modalCloseBtn" class="pointer-events-auto absolute top-2 right-2 z-30 bg-black/40 hover:bg-red-600/80 text-white rounded-full p-2 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-        
-        <div id="imgCounter" class="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm opacity-100 transition-opacity duration-300">
-            1 / 1
-        </div>
+      <button id="prevImgBtn"
+        class="pointer-events-auto absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          class="w-8 h-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+
+      <button id="nextImgBtn"
+        class="pointer-events-auto absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 text-white rounded-full p-3 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          class="w-8 h-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+
+      <button id="modalCloseBtn"
+        class="pointer-events-auto absolute top-2 right-2 z-30 bg-black/40 hover:bg-red-600/80 text-white rounded-full p-2 transition-all duration-300 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:outline-none backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          class="w-8 h-8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div id="imageLoader" class="absolute inset-0 flex items-center justify-center z-10 hidden pointer-events-none">
+        <div class="w-10 h-10 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+
+      <div id="imgCounter"
+        class="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm opacity-100 transition-opacity duration-300">
+        1 / 1
+      </div>
 
     </div>
   </div>

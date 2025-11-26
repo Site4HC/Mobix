@@ -68,7 +68,7 @@ namespace Mobix.Api.Controllers
 
             if (maxPrice.HasValue && maxPrice.Value > 0)
             {
-                dataQuery = dataQuery.Where(data => data.MaxPriceValue.HasValue && data.MaxPriceValue.Value <= maxPrice.Value);
+                dataQuery = dataQuery.Where(data => data.BestPriceEntry.Price <= maxPrice.Value);
             }
             
             // Фільтрація за характеристиками
@@ -103,6 +103,18 @@ namespace Mobix.Api.Controllers
                     break;
                 case "expensive":
                     dataQuery = dataQuery.OrderByDescending(d => d.BestPriceEntry.Price);
+                    break;
+                case "ram_desc":
+                    dataQuery = dataQuery.OrderByDescending(d => d.Smartphone.Ram.Length).ThenByDescending(d => d.Smartphone.Ram);
+                    break;
+                case "storage_desc":
+                    dataQuery = dataQuery.OrderByDescending(d => d.Smartphone.Storage.Length).ThenByDescending(d => d.Smartphone.Storage);
+                    break;
+                case "display_size_desc":
+                    dataQuery = dataQuery.OrderByDescending(d => d.Smartphone.DisplaySize);
+                    break;
+                case "display_hz_desc":
+                    dataQuery = dataQuery.OrderByDescending(d => d.Smartphone.DisplayHz);
                     break;
                 case null:
                 case "":

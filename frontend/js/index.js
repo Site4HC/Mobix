@@ -16,6 +16,11 @@ const authButtons = document.getElementById("authButtons");
 const manufacturerFilter = document.querySelectorAll(".manufacturer-checkbox");
 const minPriceFilter = document.getElementById("minPriceFilter");
 const maxPriceFilter = document.getElementById("maxPriceFilter");
+const ramFilter = document.getElementById("ramFilter");
+const storageFilter = document.getElementById("storageFilter");
+const displayMinFilter = document.getElementById("displayMinFilter");
+const displayMaxFilter = document.getElementById("displayMaxFilter");
+const displayHzFilter = document.getElementById("displayHzFilter");
 
 const filterSidebar = document.getElementById("filterSidebar");
 const openFilterBtn = document.getElementById("openFilterBtn");
@@ -34,6 +39,8 @@ const modalCloseBtn = document.getElementById('modalCloseBtn');
 const prevImgBtn = document.getElementById('prevImgBtn');
 const nextImgBtn = document.getElementById('nextImgBtn');
 const imgCounter = document.getElementById('imgCounter');
+const galleryWrapper = document.getElementById('galleryWrapper');
+const imageLoader = document.getElementById('imageLoader');
 
 const scrollBtn = document.getElementById('scrollBtn');
 const scrollBtnIcon = document.getElementById('scrollBtnIcon');
@@ -51,7 +58,6 @@ let touchStartX = 0;
 let touchEndX = 0;
 
 if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
-
     function applyTheme(theme) {
         if (theme === 'dark') {
             htmlElement.classList.add('dark');
@@ -87,7 +93,6 @@ if (themeToggleBtn && themeToggleSpan && htmlElement && bodyElement) {
 
     const savedTheme = localStorage.getItem('mobix_theme') || 'light';
     applyTheme(savedTheme);
-
 } else {
     console.error("Елементи перемикача теми не знайдено.");
 }
@@ -96,11 +101,12 @@ function renderAuthButtons(isLoggedIn) {
     authButtons.innerHTML = '';
     if (isLoggedIn) {
         const userEmail = localStorage.getItem('mobix_user_email') || 'Мій профіль';
+        const userAvatar = localStorage.getItem('mobix_user_avatar') || 'public/assets/icon-user.png';
 
         authButtons.innerHTML = `
             <div class="relative group">
                 <button id="profileDropdownBtn" class="px-2 sm:px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center gap-1 text-sm dark:bg-blue-600 dark:hover:bg-blue-700 font-medium w-full">
-                    <img src="public/assets/icon-user.png" alt="Profile" class="h-4 w-4">
+                    <img src="${userAvatar}" alt="Profile" class="h-6 w-6 rounded-full object-cover border border-white/30">
                     <span class="hidden sm:inline ml-1 max-w-[150px] truncate">${userEmail}</span>
                 </button>
                 
@@ -167,6 +173,9 @@ async function handleLogin() {
             localStorage.setItem('mobix_jwt_token', token);
             if (data.User && data.User.email) {
                 localStorage.setItem('mobix_user_email', data.User.email);
+                if (data.User.avatarUrl) {
+        localStorage.setItem('mobix_user_avatar', data.User.avatarUrl);
+    }
             }
 
             renderAuthButtons(true);
@@ -194,6 +203,9 @@ async function fetchFavoritesList() {
             userFavorites = new Set(profile.favorites.map(f => f.id));
             if (profile.email) {
                 localStorage.setItem('mobix_user_email', profile.email);
+                if (profile.avatarUrl) {
+        localStorage.setItem('mobix_user_avatar', profile.avatarUrl);
+    }
                 renderAuthButtons(true);
             }
 
@@ -248,93 +260,118 @@ function renderCards(items) {
     }
 
     items.forEach(phone => {
-        const storeUrl = phone.minPrice > 0 ? phone.storeUrl : '#';
-        const isFavorite = userFavorites.has(phone.id);
+        try {
+            const storeUrl = phone.minPrice > 0 ? phone.storeUrl : '#';
+            const isFavorite = userFavorites.has(phone.id);
+            const showPriceRange = phone.maxPrice && phone.maxPrice > phone.minPrice;
+            const priceAlignmentClass = "text-left";
 
-        const showPriceRange = phone.maxPrice && phone.maxPrice > phone.minPrice;
-        const priceAlignmentClass = showPriceRange ? "text-left" : "text-center";
+            let specsHTML = '';
+            if (phone.displaySize) specsHTML += `<li class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700"><span>Дисплей:</span> <span class="font-medium text-gray-900 dark:text-gray-100">${phone.displaySize}" ${phone.displayHz ? `(${phone.displayHz}Hz)` : ''}</span></li>`;
+            if (phone.ram) specsHTML += `<li class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700"><span>RAM:</span> <span class="font-medium text-gray-900 dark:text-gray-100">${phone.ram}</span></li>`;
+            if (phone.storage) specsHTML += `<li class="flex justify-between py-2 border-b border-gray-100 dark:border-gray-700"><span>Пам'ять:</span> <span class="font-medium text-gray-900 dark:text-gray-100">${phone.storage}</span></li>`;
+            if (specsHTML === '') specsHTML = '<li class="text-center text-gray-400 italic py-10">Характеристики уточнюються</li>';
 
-        let specsHTML = '';
+            const card = document.createElement("div");
+            card.id = `card-${phone.id}`;
+            card.className = "w-full bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col h-full";
 
-        if (phone.displaySize) {
-            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">Дисплей:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.displaySize}" ${phone.displayHz ? `(${phone.displayHz}Hz)` : ''}</span></div>`;
-        }
-        if (phone.ram) {
-            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">RAM:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.ram}</span></div>`;
-        }
-        if (phone.storage) {
-            specsHTML += `<div class="flex justify-between"><span class="text-gray-500">Пам'ять:</span> <span class="font-medium text-gray-900 dark:text-gray-200">${phone.storage}</span></div>`;
-        }
-
-        if (specsHTML === '') {
-            specsHTML = '<span class="text-gray-400 italic">Характеристики не вказані</span>';
-        }
-
-        const card = document.createElement("div");
-        card.className = "bg-white rounded-xl shadow-md overflow-hidden flex flex-col transition hover:shadow-xl duration-300 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 h-full";
-
-        card.innerHTML = `
-                <div class="flex justify-center bg-gray-50 p-3 dark:bg-gray-700 h-48 flex-shrink-0 relative">
-                    <img class="h-full w-full object-contain cursor-pointer card-image-trigger transition-transform duration-300 hover:scale-105" 
-                         data-id="${phone.id}" 
-                         src="${phone.imageUrl || 'https://placehold.co/300x200'}" 
-                         alt="${phone.name}">
-                </div>
-
-                <div class="p-4 flex flex-col flex-1">
-                    
-                    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 h-14 overflow-hidden line-clamp-2 leading-tight mb-1" title="${phone.name}">
-                        ${phone.name}
-                    </h2>
-                    
-                    <p class="text-gray-500 text-xs uppercase tracking-wide font-bold dark:text-gray-400 mb-3">
-                        ${phone.manufacturer || ''}
-                    </p>
-
-                    <div class="text-xs space-y-1 mb-4 border-t border-gray-100 dark:border-gray-700 pt-2">
-                        ${specsHTML}
+            card.innerHTML = `
+                <div id="front-${phone.id}" class="flex flex-col h-full fade-enter">
+                    <div class="flex justify-center bg-gray-50 p-4 dark:bg-gray-700 h-48 flex-shrink-0 relative">
+                        <img class="h-full w-full object-contain cursor-pointer card-image-trigger transition-transform duration-300 hover:scale-105" 
+                             data-id="${phone.id}" 
+                             src="${phone.imageUrl || 'https://placehold.co/300x200'}" 
+                             alt="${phone.name}">
                     </div>
-                    
-                    <div class="mt-auto w-full">
+
+                    <div class="p-4 flex flex-col flex-1">
+                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 h-14 overflow-hidden line-clamp-2 leading-tight mb-1" title="${phone.name}">
+                            ${phone.name}
+                        </h2>
                         
-                        <div class="${priceAlignmentClass} mb-1">
-                            <p class="text-green-600 text-lg font-bold leading-tight">
-                                ${phone.minPrice > 0
-                ? `від <span class="underline">${phone.minPrice.toFixed(0)}</span>`
-                : 'Ціна не знайдена'}
-                                
-                                ${showPriceRange
-                ? ` до <span class="underline">${phone.maxPrice.toFixed(0)}</span>`
-                : ''}
-                                
-                                ${phone.minPrice > 0 ? 'грн' : ''}
-                            </p>
+                        <p class="text-gray-500 text-xs uppercase tracking-wide font-bold dark:text-gray-400 mb-3">
+                            ${phone.manufacturer || ''}
+                        </p>
+
+                        <div class="mb-2">
+                             <button class="toggle-specs-btn text-base text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium flex items-center gap-1.5 focus:outline-none transition-colors py-1" data-card-id="${phone.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                </svg>
+                                Характеристики
+                            </button>
                         </div>
                         
-                        <p class="text-gray-500 text-xs mb-3 dark:text-gray-400 h-4 overflow-hidden text-left whitespace-nowrap text-ellipsis">
-                            ${phone.storeName ? `Найнижча ціна у: <b>${phone.storeName}</b>` : '&nbsp;'}
-                        </p>
-                        
-                        <div class="flex gap-2">
-    <button 
-        data-id="${phone.id}" 
-        data-isfavorite="${isFavorite}"
-        class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium
-        ${isFavorite ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
-        <img src="${isFavorite ? 'public/assets/icon-star-selected.png' : 'public/assets/icon-star.png'}" alt="Star" class="w-4 h-4">
-        <span>${isFavorite ? 'В обраному' : 'Додати'}</span>
-    </button>
-    
-    <a href="${storeUrl}" target="_blank"
-        class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm font-medium flex items-center justify-center
-        ${phone.minPrice === 0 ? 'opacity-50 pointer-events-none' : ''}">
-        ${phone.minPrice > 0 ? 'Купити' : 'Н/Д'}
-    </a>
-</div>
+                        <div class="mt-auto w-full">
+                            <div class="${priceAlignmentClass} mb-1">
+                                <p class="text-green-600 text-lg font-bold leading-tight">
+                                    ${phone.minPrice > 0 ? `від <span class="underline">${phone.minPrice.toFixed(0)}</span>` : 'Ціна не знайдена'}
+                                    ${showPriceRange ? ` до <span class="underline">${phone.maxPrice.toFixed(0)}</span>` : ''}
+                                    ${phone.minPrice > 0 ? 'грн' : ''}
+                                </p>
+                            </div>
+                            
+                            <p class="text-gray-500 text-xs mb-3 dark:text-gray-400 h-4 overflow-hidden text-left whitespace-nowrap text-ellipsis">
+                                ${phone.storeName ? `Найнижча ціна у: <b>${phone.storeName}</b>` : '&nbsp;'}
+                            </p>
+                            
+                            <div class="flex gap-2">
+                                <button data-id="${phone.id}" data-isfavorite="${isFavorite}" class="favorite-toggle-btn flex-1 px-3 py-2 rounded-full text-sm transition whitespace-nowrap flex items-center justify-center gap-1.5 font-medium ${isFavorite ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}">
+                                    <img src="${isFavorite ? 'public/assets/icon-star-selected.png' : 'public/assets/icon-star.png'}" alt="Star" class="w-4 h-4">
+                                    <span>${isFavorite ? 'В обраному' : 'Додати'}</span>
+                                </button>
+                                
+                                <a href="${storeUrl}" target="_blank" class="flex-1 text-center bg-blue-500 text-white py-2 px-3 rounded-full hover:bg-blue-600 text-sm font-medium flex items-center justify-center ${phone.minPrice === 0 ? 'opacity-50 pointer-events-none' : ''}">
+                                    ${phone.minPrice > 0 ? 'Купити' : 'Н/Д'}
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div id="back-${phone.id}" class="hidden flex-col h-full bg-gray-50 dark:bg-gray-900 p-6 items-center justify-center text-center fade-enter">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Характеристики</h3>
+                    
+                    <ul class="text-sm text-gray-600 dark:text-gray-300 w-full space-y-3 text-left mb-auto">
+                        ${specsHTML}
+                    </ul>
+
+                    <button class="toggle-specs-btn mt-auto bg-blue-500 text-white py-2 px-6 rounded-full hover:bg-blue-600 text-sm font-medium flex items-center justify-center gap-2 shadow-md transition-colors focus:outline-none" data-card-id="${phone.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                        </svg>
+                        Назад до товару
+                    </button>
+                </div>
             `;
-        catalog.appendChild(card);
+            
+            catalog.appendChild(card);
+        } catch (err) {
+            console.error("Error rendering card:", err);
+        }
+    });
+
+    document.querySelectorAll('.toggle-specs-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const cardId = e.currentTarget.dataset.cardId;
+            
+            const frontEl = document.getElementById(`front-${cardId}`);
+            const backEl = document.getElementById(`back-${cardId}`);
+
+            if (frontEl && backEl) {
+                if (!frontEl.classList.contains('hidden')) {
+                    frontEl.classList.add('hidden');
+                    backEl.classList.remove('hidden');
+                    backEl.classList.add('flex');
+                } else {
+                    backEl.classList.add('hidden');
+                    backEl.classList.remove('flex');
+                    frontEl.classList.remove('hidden');
+                }
+            }
+        });
     });
 
     document.querySelectorAll('.favorite-toggle-btn').forEach(btn => {
@@ -364,22 +401,36 @@ function fetchSmartphones(sortBy = '') {
     const minPrice = minPriceFilter.value ? parseInt(minPriceFilter.value) : '';
     const maxPrice = maxPriceFilter.value ? parseInt(maxPriceFilter.value) : '';
 
-    const url = `${API_BASE_URL}/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    const ram = ramFilter.value;
+    const storage = storageFilter.value;
+    const displayHz = displayHzFilter.value;
+    
+    const url = `${API_BASE_URL}/api/smartphones?sortBy=${sortBy}&manufacturer=${selectedManufacturers}&minPrice=${minPrice}&maxPrice=${maxPrice}&ram=${ram}&storage=${storage}&displayHz=${displayHz}`;
 
     fetchFavoritesList().then(() => {
         fetch(url).then(response => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
-            .then(data => {
-                allSmartphones = data;
-                filterAndRender();
-            })
-            .catch(error => {
-                console.error("Не вдалося завантажити смартфони:", error);
-                catalog.innerHTML = "";
-                noResults.classList.remove("hidden");
+        .then(data => {
+            const minDisp = parseFloat(displayMinFilter.value) || 0;
+            const maxDisp = parseFloat(displayMaxFilter.value) || 100;
+
+            allSmartphones = data.filter(phone => {
+                const size = parseFloat(phone.displaySize || 0);
+                if (displayMinFilter.value || displayMaxFilter.value) {
+                    return size >= minDisp && size <= maxDisp;
+                }
+                return true;
             });
+            
+            filterAndRender();
+        })
+        .catch(error => {
+            console.error("Не вдалося завантажити смартфони:", error);
+            catalog.innerHTML = "";
+            noResults.classList.remove("hidden");
+        });
     });
 }
 
@@ -405,6 +456,11 @@ function resetFilters() {
     manufacturerFilter.forEach(checkbox => { checkbox.checked = false; });
     minPriceFilter.value = '';
     maxPriceFilter.value = '';
+    ramFilter.value = '';
+    storageFilter.value = '';
+    displayMinFilter.value = '';
+    displayMaxFilter.value = '';
+    displayHzFilter.value = '';
 
     fetchSmartphones(currentSortValue);
 }
@@ -474,9 +530,10 @@ if (sortBtn && sortMenu) {
 
 function updateMobileSelectIcon(value) {
     if (!sortSelectMobile) return;
-
-    sortSelectMobile.classList.remove('icon-sort', 'icon-sort-name', 'icon-sort-ascending', 'icon-sort-descending');
-
+    sortSelectMobile.classList.remove(
+        'icon-sort', 'icon-sort-name', 'icon-sort-ascending', 'icon-sort-descending',
+        'icon-ram', 'icon-memory', 'icon-display-size', 'icon-display-rate'
+    );
     switch (value) {
         case 'name':
             sortSelectMobile.classList.add('icon-sort-name');
@@ -487,6 +544,18 @@ function updateMobileSelectIcon(value) {
         case 'expensive':
             sortSelectMobile.classList.add('icon-sort-descending');
             break;
+        case 'ram_desc':
+            sortSelectMobile.classList.add('icon-ram');
+            break;
+        case 'storage_desc':
+            sortSelectMobile.classList.add('icon-memory');
+            break;
+        case 'display_size_desc':
+            sortSelectMobile.classList.add('icon-display-size');
+            break;
+        case 'display_hz_desc':
+            sortSelectMobile.classList.add('icon-display-rate');
+            break;
         default:
             sortSelectMobile.classList.add('icon-sort-name');
     }
@@ -494,38 +563,22 @@ function updateMobileSelectIcon(value) {
 
 if (sortSelectMobile) {
     updateMobileSelectIcon(sortSelectMobile.value || 'name');
-
     sortSelectMobile.addEventListener('change', (e) => {
         currentSortValue = e.target.value;
         updateMobileSelectIcon(currentSortValue);
         fetchSmartphones(currentSortValue);
-
         const selectedOption = document.querySelector(`.sort-option[data-value="${currentSortValue}"]`);
-        if (selectedOption) {
-            sortBtnText.textContent = selectedOption.innerText.trim();
-        }
+        if (selectedOption) sortBtnText.textContent = selectedOption.innerText.trim();
     });
 }
 
 
 manufacturerFilter.forEach(checkbox => {
-    checkbox.addEventListener("change", () => {
-    });
-});
-
-minPriceFilter.addEventListener("input", () => {
-    fetchSmartphones(currentSortValue);
-});
-maxPriceFilter.addEventListener("input", () => {
-    fetchSmartphones(currentSortValue);
+    checkbox.addEventListener("change", () => {});
 });
 
 searchInput.addEventListener("input", filterAndRender);
 searchInputMobile.addEventListener("input", filterAndRender);
-
-
-
-const galleryWrapper = document.getElementById('galleryWrapper');
 
 function openImageModal(smartphoneId) {
     const phone = allSmartphones.find(p => p.id === smartphoneId);
@@ -533,7 +586,6 @@ function openImageModal(smartphoneId) {
 
     currentGalleryImages = [];
     if (phone.imageUrl) currentGalleryImages.push(phone.imageUrl);
-
     if (phone.imageUrl2) currentGalleryImages.push(phone.imageUrl2);
     if (phone.imageUrl3) currentGalleryImages.push(phone.imageUrl3);
 
@@ -542,77 +594,80 @@ function openImageModal(smartphoneId) {
     }
 
     currentImageIndex = 0;
-
+    
     imageModalOverlay.classList.remove('hidden');
     imageModalOverlay.classList.add('flex');
     document.body.style.overflow = 'hidden';
+    
+    modalImage.className = "pointer-events-auto max-w-[95vw] max-h-[85vh] object-contain rounded-lg select-none transition-transform duration-300";
+    
+    updateGalleryView(false); 
+}
 
-    modalImage.src = currentGalleryImages[currentImageIndex];
-    modalImage.className = "pointer-events-auto max-w-[95vw] max-h-[85vh] object-contain rounded-lg select-none shadow-2xl transition-transform duration-300"; // Скидаємо класи анімації
-    updateControls();
+function updateGalleryView(animate = true) {
+    if (imageLoader) imageLoader.classList.remove('hidden');
+    modalImage.classList.add('opacity-0');
+
+    const tempImg = new Image();
+    const targetSrc = currentGalleryImages[currentImageIndex];
+    tempImg.src = targetSrc;
+
+    tempImg.onload = () => {
+        modalImage.src = targetSrc;
+        if (imageLoader) imageLoader.classList.add('hidden');
+        modalImage.classList.remove('opacity-0');
+        
+        updateControls();
+        
+        const nextIndex = (currentImageIndex + 1) % currentGalleryImages.length;
+        const nextImg = new Image();
+        nextImg.src = currentGalleryImages[nextIndex];
+    };
+
+    tempImg.onerror = () => {
+        if (imageLoader) imageLoader.classList.add('hidden');
+        modalImage.src = "https://placehold.co/600x400?text=Error+Loading";
+        modalImage.classList.remove('opacity-0');
+    };
 }
 
 function updateControls() {
     if (currentGalleryImages.length > 1) {
-        if (prevImgBtn) prevImgBtn.classList.remove('hidden');
-        if (nextImgBtn) nextImgBtn.classList.remove('hidden');
-        if (imgCounter) {
+        if(prevImgBtn) prevImgBtn.classList.remove('hidden');
+        if(nextImgBtn) nextImgBtn.classList.remove('hidden');
+        if(imgCounter) {
             imgCounter.classList.remove('hidden');
             imgCounter.textContent = `${currentImageIndex + 1} / ${currentGalleryImages.length}`;
         }
     } else {
-        if (prevImgBtn) prevImgBtn.classList.add('hidden');
-        if (nextImgBtn) nextImgBtn.classList.add('hidden');
-        if (imgCounter) imgCounter.classList.add('hidden');
+        if(prevImgBtn) prevImgBtn.classList.add('hidden');
+        if(nextImgBtn) nextImgBtn.classList.add('hidden');
+        if(imgCounter) imgCounter.classList.add('hidden');
     }
 }
 
 function changeSlide(direction) {
     if (currentGalleryImages.length <= 1) return;
 
-    const img = document.getElementById('modalImage');
-
     if (direction === 'next') {
-        img.classList.add('slide-out-left');
+        currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
     } else {
-        img.classList.add('slide-out-right');
+        currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
     }
-
-    setTimeout(() => {
-        if (direction === 'next') {
-            currentImageIndex = (currentImageIndex + 1) % currentGalleryImages.length;
-        } else {
-            currentImageIndex = (currentImageIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-        }
-
-        img.src = currentGalleryImages[currentImageIndex];
-
-        img.classList.remove('slide-out-left', 'slide-out-right');
-
-        if (direction === 'next') {
-            img.classList.add('slide-in-from-right');
-            setTimeout(() => img.classList.remove('slide-in-from-right'), 300);
-        } else {
-            img.classList.add('slide-in-from-left');
-            setTimeout(() => img.classList.remove('slide-in-from-left'), 300);
-        }
-
-        updateControls();
-
-    }, 200);
+    
+    updateGalleryView(true);
 }
 
 function closeImageModal() {
     imageModalOverlay.classList.add('hidden');
     imageModalOverlay.classList.remove('flex');
     modalImage.src = "";
-    modalImage.classList.remove('slide-out-left', 'slide-out-right', 'slide-in-from-right', 'slide-in-from-left');
     currentGalleryImages = [];
     document.body.style.overflow = '';
 }
 
-if (prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
-if (nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
+if(prevImgBtn) prevImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('prev'); });
+if(nextImgBtn) nextImgBtn.addEventListener('click', (e) => { e.stopPropagation(); changeSlide('next'); });
 
 if (modalCloseBtn) {
     modalCloseBtn.addEventListener('click', (e) => {
@@ -634,6 +689,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeImageModal();
 });
 
+// Свайпи
 if (modalImage) {
     modalImage.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
@@ -658,23 +714,18 @@ function handleSwipe() {
     }
 }
 
-
 if (scrollBtn && scrollBtnIcon) {
-
     window.addEventListener('scroll', () => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight;
-        const winHeight = window.innerHeight;
-
-        const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
-
         if (scrollTop > 200) {
             scrollBtn.classList.remove('opacity-0', 'pointer-events-none');
         } else {
             scrollBtn.classList.add('opacity-0', 'pointer-events-none');
         }
-
-        if (scrollPercent >= 65) {
+        const docHeight = document.documentElement.scrollHeight;
+        const winHeight = window.innerHeight;
+        const scrollPercent = (scrollTop / (docHeight - winHeight)) * 100;
+         if (scrollPercent >= 65) {
             scrollBtnIcon.src = 'public/assets/icon-scroll-up.png';
             scrollBtn.dataset.action = 'up';
         } else {
@@ -685,47 +736,29 @@ if (scrollBtn && scrollBtnIcon) {
 
     scrollBtn.addEventListener('click', () => {
         if (scrollBtn.dataset.action === 'up') {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
     });
-
-} else {
-    console.error("Елементи кнопки скроллу не знайдено.");
 }
 
 function showSkeletons(count = 16) {
     catalog.innerHTML = "";
     noResults.classList.add("hidden");
-
     for (let i = 0; i < count; i++) {
         const skeleton = document.createElement("div");
-
-        skeleton.className =
-            "bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 animate-pulse flex flex-col " +
-            "w-[326px] mx-auto sm:w-full " +
-            "sm:min-w-[240px] md:min-w-[260px] lg:min-w-[294px] h-[416px]";
-
+        skeleton.className = "bg-white dark:bg-gray-800 rounded-2xl shadow-md p-5 animate-pulse flex flex-col w-[326px] mx-auto sm:w-full sm:min-w-[240px] md:min-w-[260px] lg:min-w-[294px] h-[440px]";
         skeleton.innerHTML = `
             <div class="w-full h-48 bg-gray-200 dark:bg-gray-700 rounded-xl mb-5"></div>
-
             <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-3 w-4/5"></div>
             <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-3 w-3/5"></div>
             <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-6 w-2/5"></div>
-
             <div class="flex justify-between mt-auto">
                 <div class="h-9 w-24 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
                 <div class="h-9 w-24 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
             </div>
         `;
-
         catalog.appendChild(skeleton);
     }
 }

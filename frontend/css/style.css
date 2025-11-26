@@ -51,6 +51,22 @@
     background-image: url('../public/assets/icon-sort-descending.png');
 }
 
+.icon-ram {
+    background-image: url('../public/assets/icon-ram.png');
+}
+
+.icon-memory {
+    background-image: url('../public/assets/icon-memory.png');
+}
+
+.icon-display-size {
+    background-image: url('../public/assets/icon-display-size.png');
+}
+
+.icon-display-rate {
+    background-image: url('../public/assets/icon-display-rate.png');
+}
+
 .dark .icon-sort {
     background-image: url('../public/assets/icon-sort-white.png');
 }
@@ -67,6 +83,21 @@
     background-image: url('../public/assets/icon-sort-descending-white.png');
 }
 
+.dark .icon-ram {
+    background-image: url('../public/assets/icon-ram-white.png');
+}
+
+.dark .icon-memory {
+    background-image: url('../public/assets/icon-memory-white.png');
+}
+
+.dark .icon-display-size {
+    background-image: url('../public/assets/icon-display-size-white.png');
+}
+
+.dark .icon-display-rate {
+    background-image: url('../public/assets/icon-display-rate-white.png');
+}
 
 #imageModalOverlay {
     @media (max-width: 639px) {
@@ -101,24 +132,99 @@
         transform: translateX(-100vw);
         opacity: 0;
     }
+
     .slide-out-right {
         transform: translateX(100vw);
         opacity: 0;
     }
+
     .slide-in-from-right {
         animation: slideInRight 0.3s forwards;
     }
+
     .slide-in-from-left {
         animation: slideInLeft 0.3s forwards;
     }
 }
 
 @keyframes slideInRight {
-    from { transform: translateX(50vw); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(50vw);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 @keyframes slideInLeft {
-    from { transform: translateX(-50vw); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+    from {
+        transform: translateX(-50vw);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.card-container {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    display: block;
+}
+
+.card-side {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.front-side {
+    opacity: 1;
+    visibility: visible;
+    z-index: 20;
+    background-color: white;
+}
+.dark .front-side {
+    background-color: #1f2937;
+}
+
+.back-side {
+    opacity: 0;
+    visibility: hidden;
+    z-index: 10;
+    pointer-events: none;
+    background-color: #f9fafb;
+}
+.dark .back-side {
+    background-color: #111827;
+}
+
+.card-container.show-info .front-side {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.card-container.show-info .back-side {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    z-index: 20;
+}
+
+.fade-enter {
+    animation: fadeIn 0.4s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
 }
