@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mobix.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDatabaseSetup : Migration
+    public partial class AddSomeColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,9 +18,15 @@ namespace Mobix.Api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Manufacturer = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ImageUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Manufacturer = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    ImageUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ImageUrl2 = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    ImageUrl3 = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Ram = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    DisplaySize = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
+                    DisplayHz = table.Column<int>(type: "integer", nullable: true),
+                    Storage = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,7 +54,8 @@ namespace Mobix.Api.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Email = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false)
+                    Role = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    AvatarUrl = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {

@@ -55,7 +55,7 @@ builder.Services.AddHttpClient("ParserClient", client =>
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36");
 });
 
-builder.Services.AddScoped<IStoreParserService, AlloParserService>();
+builder.Services.AddScoped<IStoreParserService, StylusParserService>();
 builder.Services.AddScoped<IStoreParserService, FoxtrotParserService>();
 builder.Services.AddScoped<IStoreParserService, CitrusParserService>();
 builder.Services.AddScoped<IStoreParserService, MoyoParserService>();
